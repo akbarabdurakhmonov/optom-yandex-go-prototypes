@@ -227,7 +227,7 @@ function harness(meta, scenarios) {
   $("#scen").onchange = e => go(+e.target.value);
   $("#reset").onclick = () => go(+$("#scen").value);
   $("#ntoggle").onclick = () => { H.notesOn = !H.notesOn; notes.classList.toggle("show", H.notesOn); $("#ntoggle").classList.toggle("on", H.notesOn); };
-  const q = new URLSearchParams(location.hash.slice(1)); go(+(q.get("s") || 0));
+  const q = new URLSearchParams(location.hash.slice(1)), qs = new URLSearchParams(location.search); go(+(q.get("s") || qs.get("s") || 0));
 }
 function go(i) {
   const s = H.scen[i]; if (!s) return; H.cur = s; $("#scen").value = i; history.replaceState(null, "", "#s=" + i);
