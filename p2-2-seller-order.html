@@ -221,6 +221,13 @@ function toast(t) { let el = $(".toast"); if (!el) { el = document.createElement
 function modal(html) { closeModal(); const bg = document.createElement("div"); bg.className = "modal-bg"; bg.id = "mbg"; bg.innerHTML = `<div class="modal">${html}</div>`; document.body.append(bg); return bg; }
 function closeModal() { const m = $("#mbg"); if (m) m.remove(); }
 
+// When embedded in a narrow frame (e.g. Confluence iFrame), scale the desktop layout down to fit
+(function fitFrame() {
+  if (window === window.top) return;
+  const apply = () => { const w = document.documentElement.clientWidth; document.documentElement.style.zoom = w < 1280 ? (w / 1280).toFixed(3) : ""; };
+  apply(); window.addEventListener("resize", apply);
+})();
+
 let S = {}, timers = [];
 const clearT = () => { timers.forEach(clearTimeout); timers.forEach(clearInterval); timers = []; };
 const P = 21400;
