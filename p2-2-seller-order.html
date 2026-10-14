@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seller: Yandex Go order</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>/* Optom.uz prototype base — colours and components taken from the Figma exports (Seller website, Buyer website, Super Admin Old) */
+:root{
+  --green:#00a028; --green-600:#008a22; --green-50:#e6f6ea; --green-100:#cdeed5;
+  --ink:#1b1c1f; --ink-2:#38383b; --muted:#6b7079; --muted-2:#8b9189; --line:#e7e9ec; --line-2:#d9dce1;
+  --bg:#f3f4f6; --card:#ffffff; --red:#d92d20; --red-50:#fdecec; --amber:#ca8504; --amber-50:#fef7c3;
+  --blue:#0c75ed; --blue-50:#e8f2fe; --violet:#7a5af8; --violet-50:#f1edff;
+  --radius:12px; --radius-sm:8px;
+  --font:"Onest",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--font);font-size:14px;line-height:1.45;color:var(--ink);background:var(--bg)}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--green);text-decoration:none}
+/* ---- prototype harness bar ---- */
+.pbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:8px 16px;background:#14161a;color:#e9ecef;font-size:12.5px}
+.pbar b{color:#fff;font-weight:600}
+.pbar .tag{background:#2a2e35;border-radius:6px;padding:2px 8px;color:#c6cbd2}
+.pbar select{background:#23272e;border:1px solid #3a3f47;border-radius:6px;color:#fff;padding:4px 8px;max-width:420px}
+.pbar .sp{flex:1}
+.pbar button{background:#23272e;border:1px solid #3a3f47;border-radius:6px;color:#fff;padding:4px 10px;cursor:pointer}
+.pbar button.on{background:var(--green);border-color:var(--green)}
+.notes{position:fixed;right:16px;bottom:16px;width:380px;max-height:60vh;overflow:auto;z-index:60;background:#fffef5;border:1px solid #eadf9f;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.18);padding:14px 16px;font-size:12.5px;display:none}
+.notes.show{display:block}
+.notes h4{margin:0 0 6px;font-size:13px}
+.notes ul{margin:4px 0 0 16px;padding:0}
+.notes li{margin:3px 0}
+.notes .src{color:#6b6200;font-size:11.5px;margin-top:8px}
+/* ---- seller / admin shell ---- */
+.shell{display:grid;grid-template-columns:232px 1fr;min-height:calc(100vh - 40px)}
+.side{padding:18px 14px;display:flex;flex-direction:column;gap:2px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:600;font-size:26px;letter-spacing:-.5px;margin:0 6px 22px;color:var(--ink)}
+.logo svg{flex:none}
+.side .grp{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin:14px 10px 6px}
+.nav{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;color:var(--ink-2);cursor:default}
+.nav.on{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.05);color:var(--ink);font-weight:500}
+.nav svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;opacity:.8}
+.side .me{margin-top:auto;background:#fff;border-radius:12px;padding:10px;display:flex;gap:10px;align-items:center}
+.ava{width:34px;height:34px;border-radius:50%;background:#d7dbe0;display:grid;place-items:center;font-weight:600;color:#555;flex:none}
+.me small{display:block;color:var(--green);font-size:12px}
+.main{padding:16px 24px 40px 8px;min-width:0}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.iconbtn{width:34px;height:34px;border-radius:9px;background:#fff;border:1px solid var(--line);display:grid;place-items:center}
+.crumbs{color:var(--muted);font-size:13px;display:flex;gap:8px;align-items:center}
+.crumbs b{color:var(--ink);font-weight:500}
+.top .sp{flex:1}
+.lang{background:#fff;border:1px solid var(--line);border-radius:9px;padding:6px 12px;font-size:13px}
+.h1{font-size:26px;font-weight:600;margin:6px 0 14px;display:flex;align-items:center;gap:10px}
+/* ---- components ---- */
+.card{background:var(--card);border-radius:var(--radius);padding:20px 22px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.card+.card{margin-top:12px}
+.card h3{margin:0 0 4px;font-size:18px;font-weight:600}
+.sub{color:var(--muted);margin:0}
+.row{display:flex;gap:12px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sec{display:grid;grid-template-columns:240px 1fr;gap:24px;padding:20px 0;border-top:1px solid var(--line)}
+.sec>.lbl{font-weight:600}
+.sec>.lbl .sub{font-weight:400;font-size:13px;margin-top:4px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:13px;font-weight:500}
+.inp{border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;background:#fff;outline:none;width:100%}
+.inp:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-50)}
+.inp.err{border-color:var(--red)}
+.inp[disabled]{background:#f6f7f9;color:var(--muted)}
+.err-t{color:var(--red);font-size:12.5px}
+.hint{color:var(--muted);font-size:12.5px}
+.btn{border:1px solid transparent;border-radius:10px;padding:10px 18px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.btn.pri{background:var(--green);color:#fff}
+.btn.pri:hover{background:var(--green-600)}
+.btn.pri[disabled]{background:#9fd8ad;cursor:not-allowed}
+.btn.out{background:#fff;border-color:var(--line-2);color:var(--ink)}
+.btn.soft{background:var(--green-50);color:var(--green)}
+.btn.dan{background:var(--red-50);color:var(--red)}
+.btn.danfill{background:var(--red);color:#fff}
+.btn.link{background:none;padding:6px 4px;color:var(--green)}
+.btn.sm{padding:6px 12px;font-size:13px;border-radius:8px}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:8px;padding:3px 9px;font-size:12.5px;font-weight:500;border:1px solid transparent}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.g{background:var(--green-50);color:var(--green);border-color:var(--green-100)}
+.pill.v{background:var(--violet-50);color:var(--violet);border-color:#ddd3ff}
+.pill.a{background:#fff6e0;color:#b54708;border-color:#fde7b0}
+.pill.r{background:var(--red-50);color:var(--red);border-color:#f9c9c4}
+.pill.n{background:#f1f2f4;color:var(--ink-2);border-color:var(--line)}
+.pill.b{background:var(--blue-50);color:var(--blue);border-color:#c9e0fd}
+.alert{border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;border-left:4px solid}
+.alert .ic{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex:none}
+.alert.w{background:var(--amber-50);border-color:var(--amber)} .alert.w .ic{background:var(--amber)}
+.alert.e{background:var(--red-50);border-color:var(--red)} .alert.e .ic{background:var(--red)}
+.alert.i{background:var(--blue-50);border-color:var(--blue)} .alert.i .ic{background:var(--blue)}
+.alert.s{background:var(--green-50);border-color:var(--green)} .alert.s .ic{background:var(--green)}
+.alert b{display:block;margin-bottom:2px}
+.toggle{position:relative;width:40px;height:22px;border-radius:12px;background:#d0d4da;border:none;cursor:pointer;flex:none;transition:.15s}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.toggle.on{background:var(--green)}
+.toggle.on::after{left:21px}
+.toggle[disabled]{opacity:.45;cursor:not-allowed}
+.chk{display:flex;gap:10px;align-items:flex-start;cursor:pointer;margin:8px 0}
+.chk input{width:18px;height:18px;accent-color:var(--green);margin-top:2px;flex:none}
+table.t{width:100%;border-collapse:collapse}
+table.t th{background:#f6f7f9;text-align:left;font-size:12.5px;font-weight:500;color:var(--muted);padding:10px 12px}
+table.t td{border-top:1px solid var(--line);padding:12px;vertical-align:middle}
+.kv{display:flex;gap:10px;padding:12px 0;border-top:1px solid var(--line);align-items:flex-start}
+.kv:first-of-type{border-top:none}
+.kv .k{color:var(--muted)}
+.kv svg{width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:1.6;flex:none;margin-top:1px}
+.modal-bg{position:fixed;inset:0;background:rgba(16,18,22,.45);display:grid;place-items:center;z-index:40;padding:20px}
+.modal{background:#fff;border-radius:16px;width:min(560px,100%);max-height:90vh;overflow:auto;padding:22px 24px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.modal h3{margin:0 0 6px;font-size:19px}
+.modal .acts{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1b1c1f;color:#fff;border-radius:10px;padding:10px 16px;z-index:70;box-shadow:0 10px 30px rgba(0,0,0,.25);font-size:13.5px}
+.digits{display:flex;gap:6px;align-items:flex-end}
+.digit{background:#eceef1;border-radius:10px;width:42px;height:52px;display:grid;place-items:center;font-size:24px;font-weight:600}
+.dsep{font-size:24px;font-weight:600;padding:0 4px 12px}
+.ycard{border:1.5px solid var(--line-2);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:center;cursor:pointer;background:#fff}
+.ycard.on{border-color:var(--green);background:var(--green-50)}
+.ycard .r{width:18px;height:18px;border-radius:50%;border:2px solid var(--line-2);flex:none}
+.ycard.on .r{border:5px solid var(--green)}
+.ycard[aria-disabled=true]{opacity:.5;cursor:not-allowed}
+.yglogo{font-weight:700;letter-spacing:-.3px}
+.yglogo i{font-style:italic;font-weight:800}
+.code-big{font-size:30px;letter-spacing:6px;font-weight:700;background:#f6f7f9;border-radius:10px;padding:8px 14px;display:inline-block}
+.steps{display:flex;justify-content:space-between;position:relative;margin:6px 0 4px}
+.steps::before{content:"";position:absolute;left:20px;right:20px;top:17px;height:2px;background:var(--line)}
+.step{position:relative;text-align:center;flex:1;color:var(--muted);font-size:13px}
+.step .dot{width:36px;height:36px;border-radius:10px;margin:0 auto 6px;background:#fff;border:1.5px solid var(--line-2);display:grid;place-items:center}
+.step.on{color:var(--green);font-weight:500}
+.step.on .dot{background:var(--green-50);border-color:var(--green)}
+.timeline .it{display:flex;gap:12px;padding:8px 0}
+.timeline .it .d{width:30px;height:30px;border-radius:50%;background:#f1f2f4;display:grid;place-items:center;flex:none;font-size:13px}
+.timeline .it small{display:block;color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mb0{margin-bottom:0}
+.spin{width:16px;height:16px;border:2px solid #c8ead1;border-top-color:var(--green);border-radius:50%;animation:sp 0.8s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ann{outline:2px dashed #f0b400;outline-offset:3px;border-radius:12px}
+
+.og{display:grid;grid-template-columns:1fr 330px;gap:12px;align-items:start}
+.prod{display:flex;align-items:center;gap:12px}
+.thumb{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#e8d8d8,#c9b3b3)}
+.price-line{background:#f6f7f9;border-radius:10px;padding:10px 12px;margin-top:12px;font-size:13.5px}
+.price-line b{font-weight:600}
+.preset{border:1.5px solid var(--line-2);border-radius:10px;padding:10px 12px;cursor:pointer;display:flex;gap:10px;align-items:center}
+.preset.on{border-color:var(--green);background:var(--green-50)}
+.preset .r{width:16px;height:16px;border-radius:50%;border:2px solid var(--line-2);flex:none}
+.preset.on .r{border:5px solid var(--green)}
+.presets{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.courier{display:flex;gap:14px;align-items:center;background:#f6f7f9;border-radius:12px;padding:12px 14px}
+.cnt{font-variant-numeric:tabular-nums;font-weight:600}
+</style></head><body>
+<div id="app"></div>
+<script>// Prototype harness: scenario picker, notes panel, toasts, icons, seller shell
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const som = n => Math.round(n).toLocaleString("ru-RU").replace(/,/g, " ") + " сум";
+const ICON = {
+  chart: '<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  box: '<svg viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/></svg>',
+  list: '<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+  chat: '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg>',
+  users: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M16 11a3 3 0 1 0 0-6M21 20c0-2-1.5-4-4-4.6"/></svg>',
+  store: '<svg viewBox="0 0 24 24"><path d="M3 9l2-5h14l2 5M4 9v11h16V9M3 9h18M9 20v-6h6v6"/></svg>',
+  gear: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>',
+  spark: '<svg viewBox="0 0 24 24"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></svg>',
+  truck: '<svg viewBox="0 0 24 24"><path d="M2 6h12v10H2zM14 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>',
+  pin: '<svg viewBox="0 0 24 24"><path d="M12 22s7-7 7-12a7 7 0 1 0-14 0c0 5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  phone: '<svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A18 18 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg>',
+  cal: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  card: '<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>',
+  msg: '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg>',
+  user: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
+  bell: '<svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg>',
+  globe: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>',
+  side: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>',
+};
+const LOGO = '<span class="logo"><svg width="34" height="34" viewBox="0 0 34 34"><rect x="12" y="2" width="10" height="30" rx="3" fill="#00a028"/><rect x="2" y="8" width="30" height="5" rx="2.5" fill="#00a028"/><rect x="2" y="15" width="30" height="5" rx="2.5" fill="#00a028"/><rect x="2" y="22" width="30" height="5" rx="2.5" fill="#00a028"/><rect x="15" y="9" width="4" height="17" rx="1" fill="#fff"/></svg>optom</span>';
+const YG = '<span class="yglogo">Yandex <i>Go</i></span>';
+const FARGO = '<span style="font-weight:800;font-style:italic;letter-spacing:-.5px"><span style="color:#e3262e">◤</span> FARGO</span>';
+
+function sellerShell(active, crumbs, content) {
+  const nav = (k, ic, t) => `<div class="nav ${active === k ? "on" : ""}">${ICON[ic]}${t}</div>`;
+  return `<div class="shell"><aside class="side">${LOGO}
+    <div class="grp">Основное</div>${nav("an", "chart", "Аналитика")}${nav("pr", "box", "Товары")}${nav("or", "list", "Заказы")}${nav("ch", "chat", "Чаты")}
+    <div class="grp">Организация</div>${nav("em", "users", "Сотрудники")}${nav("br", "store", "Филиалы")}
+    <div class="grp">Система</div>${nav("se", "gear", "Настройки")}${nav("ta", "spark", "Тарифы")}
+    <div class="me"><span class="ava">НА</span><div><b style="font-weight:600">Николаев А. Д.</b><small>● Подтвержден</small></div></div></aside>
+    <main class="main"><div class="top"><span class="iconbtn">${ICON.side.replace("<svg", '<svg width="18" height="18" fill="none" stroke="#38383b"')}</span><div class="crumbs">${crumbs}</div><span class="sp"></span><span class="iconbtn">${ICON.bell.replace("<svg", '<svg width="18" height="18" fill="none" stroke="#38383b"')}</span><span class="lang">Русский ▾</span></div>${content}</main></div>`;
+}
+
+// ---- harness ----
+const H = { scen: [], cur: null, notesOn: false };
+function harness(meta, scenarios) {
+  H.scen = scenarios;
+  const bar = document.createElement("div"); bar.className = "pbar";
+  bar.innerHTML = `<b>${esc(meta.title)}</b><span class="tag">${esc(meta.stories)}</span><span class="tag">v${meta.version}</span>
+    <span>Scenario:</span><select id="scen">${scenarios.map((s, i) => `<option value="${i}">${i + 1}. ${esc(s.label)}</option>`).join("")}</select>
+    <button id="reset" title="Reset the current scenario">↺ Reset</button><span class="sp"></span>
+    <span style="color:#9aa1ab">Prototype · RU UI · notes in English</span>
+    <button id="ntoggle">Notes for this state</button>`;
+  document.body.prepend(bar);
+  const notes = document.createElement("div"); notes.className = "notes"; notes.id = "notes"; document.body.append(notes);
+  $("#scen").onchange = e => go(+e.target.value);
+  $("#reset").onclick = () => go(+$("#scen").value);
+  $("#ntoggle").onclick = () => { H.notesOn = !H.notesOn; notes.classList.toggle("show", H.notesOn); $("#ntoggle").classList.toggle("on", H.notesOn); };
+  const q = new URLSearchParams(location.hash.slice(1)); go(+(q.get("s") || 0));
+}
+function go(i) {
+  const s = H.scen[i]; if (!s) return; H.cur = s; $("#scen").value = i; history.replaceState(null, "", "#s=" + i);
+  s.apply(); setNotes(s.notes, s.src);
+}
+function setNotes(list, src) {
+  $("#notes").innerHTML = `<h4>What this state shows</h4><ul>${(list || []).map(n => `<li>${n}</li>`).join("")}</ul>${src ? `<div class="src">${src}</div>` : ""}`;
+}
+let toastT;
+function toast(t) { let el = $(".toast"); if (!el) { el = document.createElement("div"); el.className = "toast"; document.body.append(el); } el.textContent = t; el.style.display = "block"; clearTimeout(toastT); toastT = setTimeout(() => el.style.display = "none", 3200); }
+function modal(html) { closeModal(); const bg = document.createElement("div"); bg.className = "modal-bg"; bg.id = "mbg"; bg.innerHTML = `<div class="modal">${html}</div>`; document.body.append(bg); return bg; }
+function closeModal() { const m = $("#mbg"); if (m) m.remove(); }
+
+let S = {}, timers = [];
+const clearT = () => { timers.forEach(clearTimeout); timers.forEach(clearInterval); timers = []; };
+const P = 21400;
+function reset(over) {
+  clearT(); closeModal();
+  S = Object.assign({ stage: "new", offer: 20900, branchOpen: true, conn: "ok", failCreate: false, preset: "M", larger: false, tariff: "courier", custom: false, reason: "", cancelled: "", deadline: 0, returnCode: "482915", buyerCancelled: false }, over || {});
+  render();
+}
+const ORDER = { new: ["Новый", "g"], confirmed: ["Подтвержден", "v"], processing: ["В обработке", "b"], shipped: ["Отправлен", "b"], success: ["Успешно завершен", "n"], returning: ["Возврат в процессе", "a"], cancelled: ["Отменен", "r"] };
+function orderStatus() {
+  const st = S.stage;
+  if (S.buyerCancelled) return "cancelled";
+  if (["new", "closed", "broken"].includes(st)) return "new";
+  if (["estimating", "awaiting", "notbooked", "cancelled"].includes(st)) return "confirmed";
+  if (["search", "assigned", "atpickup"].includes(st)) return "processing";
+  if (["intransit", "atbuyer"].includes(st)) return "shipped";
+  if (st === "returning") return "returning";
+  return "success";
+}
+function steps() {
+  const os = orderStatus(), idx = { new: -1, confirmed: 0, processing: 1, shipped: 2, success: 3, returning: 2, cancelled: -1 }[os];
+  const it = [["Подтвержден", "list"], ["В обработке", "box"], ["Отправлен", "truck"], ["Доставлено", "chart"]];
+  return `<div class="steps">${it.map((x, i) => `<div class="step ${i <= idx ? "on" : ""}"><div class="dot">${ICON[x[1]].replace("<svg", '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"')}</div>${x[0]}</div>`).join("")}</div>`;
+}
+function countdown(sec) { const m = String(Math.floor(sec / 60)).padStart(2, "0"), s = String(sec % 60).padStart(2, "0"); return `${m}:${s}`; }
+
+function actionCard() {
+  const st = S.stage;
+  if (S.buyerCancelled) return `<div class="card"><div class="alert e"><span class="ic">!</span><div><b>Покупатель отменил этот заказ</b>Не передавайте посылку курьеру. Возврат покупателю выполняется автоматически.</div></div></div>`;
+  if (st === "new" || st === "closed" || st === "broken") {
+    const priceLine = `<div class="price-line">Покупатель оплатил доставку: <b>${som(P)}</b> · Цена Яндекса сейчас: <b>≈ ${som(S.offer)}</b> <span class="muted">(проверено 14:32)</span></div>`;
+    let block = "";
+    if (st === "closed") block = `<p class="hint mt8">Ваш филиал сейчас закрыт. Курьера можно вызвать в рабочие часы (сегодня 09:00–18:00).</p>`;
+    if (st === "broken") return `<div class="card"><h3>Подтвердите заказ</h3><div class="alert e mt12"><span class="ic">!</span><div><b>Yandex Go сейчас недоступен: токен недействителен</b>Исправьте это в <a href="#" onclick="return false">настройках доставки</a> или отмените заказ — покупатель получит полный возврат.</div></div><div class="row mt12"><button class="btn dan" id="reject">Отменить заказ</button></div></div>`;
+    return `<div class="card"><h3>Подтвердите заказ</h3><p class="sub">У вас есть 24 часа, чтобы принять заказ. Если заказ не будет подтверждён вовремя, он автоматически отменится</p>
+      <div class="digits mt12"><span class="digit">2</span><span class="digit">3</span><span class="dsep">:</span><span class="digit">4</span><span class="digit">1</span><span class="dsep">:</span><span class="digit">0</span><span class="digit">7</span></div>
+      ${priceLine}
+      <div class="row mt12"><button class="btn dan" id="reject">Отклонить</button><button class="btn pri" id="confirm" ${st === "closed" ? "disabled" : ""}>Подтвердить</button></div>
+      ${block || '<p class="hint mt8">Подтверждайте, когда посылка упакована: курьер Яндекса вызывается сразу.</p>'}</div>`;
+  }
+  if (st === "estimating") return `<div class="card"><div class="row"><span class="spin"></span><b>Рассчитываем цену курьера…</b></div><p class="sub mt8">Заказ подтверждён. Яндекс считает цену — это занимает до минуты.</p></div>`;
+  if (st === "awaiting") return `<div class="card ann"><div class="alert w"><span class="ic">!</span><div><b>Нужно ваше решение по цене</b>Яндекс сейчас просит ${som(S.offer)}. Покупатель оплатил ${som(P)}. Разница ${som(S.offer - P)} спишется с вашего баланса Яндекса.
+      <div class="mt8">Предложение действует ещё <span class="cnt" id="cnt">${countdown(S.deadline)}</span></div>
+      <div class="row mt12"><button class="btn out" id="notnow">Не сейчас</button><button class="btn pri" id="book">Вызвать курьера</button></div></div></div></div>`;
+  if (st === "search") return `<div class="card"><div class="row" style="justify-content:space-between"><div class="row"><span class="spin"></span><b>Ищем курьера</b></div><button class="btn sm out" id="cancelc">Отменить курьера</button></div><p class="sub mt8">Обычно курьер находится за 5–15 минут.${S.offer <= P ? ` Цена ${som(S.offer)} подтверждена автоматически: она не выше оплаченной покупателем.` : ""}</p></div>`;
+  if (st === "assigned" || st === "atpickup") {
+    const at = st === "atpickup";
+    return `<div class="card"><div class="row" style="justify-content:space-between"><h3>${at ? "Курьер прибыл: проверьте машину и назовите код" : "Курьер едет к вам"}</h3><button class="btn sm ${at ? "dan" : "out"}" id="cancelc">Отменить курьера</button></div>
+      <div class="courier mt12"><span class="ava" style="width:46px;height:46px">ДТ</span><div style="flex:1"><b>Дилшод Т.</b><div class="muted small">Chevrolet Cobalt · белый · 01 A 777 BA</div>${at ? "" : '<div class="small mt8">Подготовьте посылку: курьер будет примерно через <b>12 мин</b>.</div>'}</div>
+      <div style="text-align:center"><div class="small muted">Код для курьера</div><div class="code-big">5 2 7 1 0 4</div></div></div></div>`;
+  }
+  if (st === "intransit") return `<div class="card"><div class="alert s"><span class="ic">✓</span><div><b>Передано курьеру в 14:52</b>Посылка в пути. Отмена в платформе больше невозможна.</div></div></div>`;
+  if (st === "notbooked" || st === "cancelled") {
+    const title = st === "cancelled" ? "Вызов курьера отменён" : "Курьер не вызван";
+    return `<div class="card"><div class="alert ${st === "cancelled" ? "w" : "e"}"><span class="ic">!</span><div><b>${title}</b>${S.reason}${S.cancelFee ? `<div class="mt8">Комиссия за отмену: <b>${som(S.cancelFee)}</b> (списана с вашего счёта Яндекса).</div>` : ""}</div></div>
+      <div class="row mt12"><button class="btn dan" id="cancelorder">Отменить заказ</button><button class="btn pri" id="rebook" ${S.branchOpen ? "" : "disabled"}>Вызвать доставку заново</button></div>
+      <p class="hint mt8">Заказ остаётся подтверждённым с пометкой «Доставка не вызвана». Покупатель видит «Курьер задерживается».</p></div>`;
+  }
+  if (st === "returning") return `<div class="card"><div class="alert w"><span class="ic">!</span><div><b>Посылка возвращается: примите её и назовите код возврата</b>Покупатель не вышел к курьеру. Покупателю вернут стоимость товара за вычетом платы Яндекса за возврат; стоимость доставки не возвращается.</div></div>
+      <div class="mt12"><span class="small muted">Код возврата</span><div class="code-big">${S.returnCode.split("").join(" ")}</div></div></div>`;
+  if (st === "success") return `<div class="card"><div class="alert s"><span class="ic">✓</span><div><b>Доставлено</b>Заказ завершён автоматически, когда Яндекс сообщил о доставке. Если покупатель сообщит, что не получил посылку, измените статус вручную — поддержка проверит коды.</div></div></div>`;
+  return "";
+}
+function timeline() {
+  const it = [];
+  const add = (t, d) => it.push(`<div class="it"><span class="d">•</span><div>${t}<small>${d}</small></div></div>`);
+  if (orderStatus() !== "new") add("Заказ подтвержден, вызов курьера Yandex Go", "14 октября 2026 г. в 14:33");
+  if (["search", "assigned", "atpickup", "intransit", "returning", "success"].includes(S.stage)) add(S.offer <= P ? "Цена курьера подтверждена автоматически" : "Вы подтвердили доплату за курьера", "14:34");
+  if (["assigned", "atpickup", "intransit", "returning", "success"].includes(S.stage)) add("Курьер назначен: Дилшод Т.", "14:41");
+  if (["intransit", "returning", "success"].includes(S.stage)) add("Передано курьеру", "14:52");
+  if (S.stage === "returning") add("Покупатель не вышел к курьеру, посылка возвращается", "15:40");
+  if (S.stage === "success") add("Доставлено", "15:31");
+  return it.length ? `<div class="card"><h3>Статус активности</h3>${steps()}<div class="timeline mt12" style="border-top:1px solid var(--line);padding-top:8px">${it.join("")}</div></div>` : "";
+}
+function render() {
+  const os = ORDER[orderStatus()];
+  const goods = [["Кроссовки Nike Air", 4, 1200000], ["iPhone 17 Pro Max • 12gb, 2TB", 1, 1200000], ["Домашняя рутина для корпусной мебели", 3, 1200000]];
+  const left = `${actionCard()}${timeline()}<div class="card" style="padding:0;overflow:hidden"><h3 style="padding:18px 20px 10px">Список товаров</h3><table class="t"><thead><tr><th>Товары</th><th>SKU</th><th>Кол-во</th><th>Цена</th></tr></thead><tbody>${goods.map(g => `<tr><td><div class="prod"><span class="thumb"></span>${g[0]}</div></td><td class="muted">SKU-123</td><td>${g[1]}</td><td>${som(g[2])}</td></tr>`).join("")}</tbody></table></div>`;
+  const kv = (ic, k, v) => `<div class="kv">${ICON[ic]}<div><span class="k">${k}</span> ${v}</div></div>`;
+  const right = `<div class="card"><h3>Покупатель</h3>${kv("user", "", "<b>Алимов Азиз Равшанович</b>")}${kv("phone", "Телефон:", "<b>+998 90 023 23 12</b>")}${kv("cal", "Дата заказа:", "<b>14/10/2026</b>")}</div>
+    <div class="card"><h3>Доставка</h3>${kv("truck", "Способ доставки:", YG + ` · ${S.tariff === "courier" ? "Курьер" : S.tariff === "express" ? "Экспресс" : "Грузовой"}`)}${kv("pin", "Адрес доставки:", "<br><b>Ташкент, массив Буз-1, 8</b><div class='small muted'>подъезд 2, кв./офис 45 · до двери</div>")}${kv("user", "Получатель:", "<b>Азизбек Хамидов, +998 90 222 02 20</b>")}${kv("msg", "Комментарий:", "<b>Возле Korzinka</b>")}</div>
+    <div class="card"><h3>Оплата</h3>${kv("card", "Статус:", '<span class="pill g">Оплачено</span>')}${kv("truck", "Цена доставки:", `<b>${som(P)}</b>`)}${kv("list", "Сумма:", "<b>9 621 400 сум</b>")}${kv("card", "Способ:", "<b>UZCARD</b>")}</div>`;
+  const content = `<div class="h1">Заказ №345934 <span class="pill ${os[1]}">${os[0]}</span></div><div class="og"><div>${left}</div><div>${right}</div></div>`;
+  $("#app").innerHTML = sellerShell("or", `Заказы <span>/</span> <b>${os[0]}</b> <span>/</span> Заказ №345934`, content);
+  bind();
+}
+function parcelModal() {
+  const fits = { courier: ["S", "M", "L"], express: ["S", "M", "L", "XL"] };
+  const all = { S: "S · до 30×20×10 см · 2 кг", M: "M · до 40×30×20 см · 5 кг", L: "L · до 50×40×30 см · 10 кг", XL: "XL · до 60×40×40 см · 20 кг" };
+  const list = S.larger ? ["Экспресс · до 20 кг, сумма сторон ≤ 150 см", "Грузовой · фургон до 300 кг"] : fits[S.tariff];
+  const m = modal(`<h3>Подтвердите посылку</h3><p class="sub">Покупатель оплатил: <b>${YG} · Курьер</b>. Данные заполнены из карточек товаров.</p>
+    ${S.larger ? `<div class="alert w mt12"><span class="ic">!</span><div>Покупатель оплатил тариф «Курьер». Доплата за более крупную машину спишется с вашего баланса Яндекса.</div></div>` : ""}
+    <div class="presets mt12">${list.map(k => `<div class="preset ${S.preset === k ? "on" : ""}" data-p="${k}"><span class="r"></span><span>${all[k] || k}</span></div>`).join("")}<div class="preset ${S.preset === "custom" ? "on" : ""}" data-p="custom"><span class="r"></span><span>Свой размер</span></div></div>
+    ${S.preset === "custom" ? `<div class="grid2 mt12" style="grid-template-columns:1fr 1fr 1fr"><div class="field"><label>Длина, см</label><input class="inp" value="35"></div><div class="field"><label>Ширина, см</label><input class="inp" value="25"></div><div class="field"><label>Высота, см</label><input class="inp" value="15"></div></div>` : ""}
+    <div class="field mt12"><label>Вес посылки, кг</label><input class="inp" value="4.250"><span class="hint">Сумма веса товаров × количество. Хрупкий товар: в комментарий курьеру добавится «Хрупкое».</span></div>
+    ${S.larger ? "" : '<button class="btn link" id="larger">Моя посылка больше →</button>'}
+    ${S.createErr ? `<div class="alert e mt8"><span class="ic">!</span><div>Не удалось вызвать курьера. Заказ ещё не подтверждён. Попробуйте через несколько минут.</div></div>` : ""}
+    <div class="acts"><button class="btn out" id="pcancel">Отмена</button><button class="btn pri" id="pgo">Подтвердить и вызвать курьера</button></div>`);
+  m.querySelectorAll(".preset").forEach(p => p.onclick = () => { S.preset = p.dataset.p; parcelModal(); });
+  const lg = $("#larger"); if (lg) lg.onclick = () => { S.larger = true; S.preset = "Экспресс · до 20 кг, сумма сторон ≤ 150 см"; parcelModal(); };
+  $("#pcancel").onclick = () => { S.createErr = false; closeModal(); };
+  $("#pgo").onclick = () => {
+    const b = $("#pgo"); b.disabled = true; b.innerHTML = '<span class="spin"></span> Вызываем…';
+    timers.push(setTimeout(() => {
+      if (S.failCreate) { S.createErr = true; parcelModal(); return; }
+      closeModal(); if (S.larger) { S.tariff = "express"; S.offer = 29600; }
+      S.stage = "estimating"; toast("Заказ подтверждён. Вызываем курьера…"); render();
+      timers.push(setTimeout(() => { if (S.offer <= P) { S.stage = "search"; render(); timers.push(setTimeout(() => { S.stage = "assigned"; render(); }, 2500)); } else startAwaiting(540); }, 1500));
+    }, 900));
+  };
+}
+function startAwaiting(sec) {
+  S.stage = "awaiting"; S.deadline = sec; render();
+  priceModal();
+  const iv = setInterval(() => { S.deadline--; const c = $("#cnt"), c2 = $("#cnt2"); if (c) c.textContent = countdown(S.deadline); if (c2) c2.textContent = countdown(S.deadline);
+    if (S.deadline <= 0) { clearInterval(iv); closeModal(); S.stage = "notbooked"; S.reason = "Цена Яндекса истекла. Вызовите доставку заново, чтобы получить новую цену."; toast("Цена Яндекса истекла."); render(); } }, 1000);
+  timers.push(iv);
+}
+function priceModal() {
+  const m = modal(`<h3>Яндекс просит больше, чем оплатил покупатель</h3><p>Яндекс сейчас просит <b>${som(S.offer)}</b>. Покупатель оплатил <b>${som(P)}</b>. Разница <b>${som(S.offer - P)}</b> спишется с вашего баланса Яндекса.</p>
+    <p class="sub">Предложение действует ещё <span class="cnt" id="cnt2">${countdown(S.deadline)}</span>. «Не сейчас» отменит вызов бесплатно — доставку можно вызвать позже.</p>
+    <div class="acts"><button class="btn out" id="mnot">Не сейчас</button><button class="btn pri" id="mbook">Вызвать курьера</button></div>`);
+  $("#mnot").onclick = notNow; $("#mbook").onclick = bookAtCost;
+}
+function notNow() { clearT(); closeModal(); S.stage = "cancelled"; S.reason = "Вы выбрали «Не сейчас». Вызов отменён бесплатно; вызовите доставку позже — цена может снизиться."; render(); }
+function bookAtCost() { clearT(); closeModal(); S.stage = "search"; toast(`Курьер вызван. Доплата ${som(S.offer - P)} спишется с вашего баланса Яндекса.`); render(); timers.push(setTimeout(() => { S.stage = "assigned"; render(); }, 2500)); }
+function cancelCourier() {
+  const paid = S.stage === "atpickup";
+  const m = modal(paid ? `<h3>Отменить курьера?</h3><p>Отмена сейчас стоит <b>6 000 сум</b> и будет списана с вашего счёта Яндекса.</p><div class="acts"><button class="btn out" id="keep">Оставить курьера</button><button class="btn danfill" id="docancel">Отменить курьера</button></div>`
+    : `<h3>Отменить курьера бесплатно?</h3><p class="sub">Заказ останется подтверждённым. Вы сможете вызвать доставку заново или отменить заказ.</p><div class="acts"><button class="btn out" id="keep">Оставить курьера</button><button class="btn danfill" id="docancel">Отменить курьера</button></div>`);
+  $("#keep").onclick = closeModal;
+  $("#docancel").onclick = () => { closeModal(); S.cancelFee = paid ? 6000 : 0; S.stage = "cancelled"; S.reason = "Вы отменили вызов курьера."; render(); };
+}
+function bind() {
+  const on = (id, f) => { const el = $("#" + id); if (el) el.onclick = f; };
+  on("confirm", () => { S.preset = "M"; S.larger = false; parcelModal(); });
+  on("reject", () => modal(`<h3>Отменить заказ?</h3><p class="sub">Покупатель получит полный возврат.</p><div class="acts"><button class="btn out" onclick="closeModal()">Назад</button><button class="btn danfill" onclick="closeModal();S.buyerCancelled=true;render()">Отменить заказ</button></div>`));
+  on("book", bookAtCost); on("notnow", notNow);
+  on("cancelc", cancelCourier);
+  on("rebook", () => { S.preset = "M"; S.larger = S.reason.includes("не помещается"); S.offer = 20900; parcelModal(); });
+  on("cancelorder", () => modal(`<h3>Отменить заказ?</h3><p class="sub">Покупатель получит полный возврат.</p><div class="acts"><button class="btn out" onclick="closeModal()">Назад</button><button class="btn danfill" onclick="closeModal();S.buyerCancelled=true;render()">Отменить заказ</button></div>`));
+}
+harness({ title: "P2.2 Seller: confirm a Yandex Go order, price check, cancel, re-book", stories: "US-YG-1.5, 1.6, 1.8, 1.9, 1.10", version: "1.0" }, [
+  { label: "New paid order → confirm (offer ≤ buyer price)", apply: () => reset({ offer: 20900 }), notes: ["Existing “Подтвердите заказ” card (24 h countdown) + new price line: buyer paid vs Yandex now (US-YG-1.5 AC1).", "<b>Подтвердить</b> opens “Подтвердите посылку”: only presets that fit the paid tariff (AC2, AC4). Confirming creates the claim (AC7).", "Offer 20 900 ≤ 21 400 → accepted automatically, courier search, then courier assigned (US-YG-1.6 AC2)."], src: "Base screen: Seller website → Заказы → Заказ №345934 (Figma, frames “Новый”, “Подтвержден”)." },
+  { label: "New paid order → confirm (offer higher → seller decides)", apply: () => reset({ offer: 23100 }), notes: ["Offer 23 100 > 21 400 → price dialog with countdown: <b>Вызвать курьера</b> (pay the difference) or <b>Не сейчас</b> (claim cancelled for free) (US-YG-1.6 AC3–AC5).", "Proposed D11; who keeps a saving is a management decision."] },
+  { label: "Price decision expires", apply: () => { reset({ offer: 23100 }); startAwaiting(6); }, notes: ["No decision before valid_until − 60 s → NotBooked “Цена Яндекса истекла” and <b>Вызвать доставку заново</b> (US-YG-1.6 AC6)."] },
+  { label: "Courier assigned (pickup code)", apply: () => reset({ stage: "assigned" }), notes: ["Courier name, car, plate, ETA and the pickup code in large digits (US-YG-1.8 AC1).", "<b>Отменить курьера</b> is free before the courier arrives (US-YG-1.9 AC4)."] },
+  { label: "Courier at the branch → paid cancellation", apply: () => reset({ stage: "atpickup" }), notes: ["Seller may still cancel while the courier waits; the fee from cancel-info is charged to the seller (US-YG-1.9 AC5).", "Buyer can no longer cancel at this point."] },
+  { label: "In transit (no cancel)", apply: () => reset({ stage: "intransit" }), notes: ["After pickup nobody can cancel in the platform (US-YG-1.9 AC6); pickup code hidden (US-YG-1.8 AC3)."] },
+  { label: "Not booked: no courier found → re-book", apply: () => reset({ stage: "notbooked", reason: "Курьер не найден за 30 минут." }), notes: ["Reason + <b>Вызвать доставку заново</b> (new attempt, new request_id) and <b>Отменить заказ</b> (US-YG-1.10 AC1, AC2)."] },
+  { label: "Not booked: parcel does not fit → larger tariff", apply: () => reset({ stage: "notbooked", reason: "Яндекс сообщает, что посылка не помещается в тариф «Курьер». Вызовите доставку заново с более крупным тарифом — доплата за ваш счёт." }), notes: ["Re-book opens the parcel dialog with larger tariffs and the cost warning (US-YG-1.10 AC3, US-YG-1.5 AC6, BR-Y22)."] },
+  { label: "Parcel returning (buyer absent)", apply: () => reset({ stage: "returning" }), notes: ["Return code for the seller; refund rule shown: goods minus the Yandex return fee, delivery fee kept (US-YG-1.10 AC7–AC8)."] },
+  { label: "Delivered → order Success", apply: () => reset({ stage: "success" }), notes: ["Order completes automatically at delivered_finish (US-YG-1.7 AC5). Manual status change stays available for disputes (BR-Y24)."] },
+  { label: "Branch closed", apply: () => reset({ stage: "closed" }), notes: ["“Подтвердить” disabled outside working hours with the hint (US-YG-1.5 AC3)."] },
+  { label: "Yandex connection not usable", apply: () => reset({ stage: "broken" }), notes: ["Token or balance problem / switched off → notice instead of the confirm button; seller fixes settings or cancels with a full refund (US-YG-1.5 AC10)."] },
+  { label: "Booking fails (order stays unconfirmed)", apply: () => reset({ failCreate: true }), notes: ["Click Подтвердить → Подтвердить и вызвать курьера: claims/create fails after retries → error in the dialog, order not confirmed (US-YG-1.5 AC8)."] },
+  { label: "Buyer cancelled the order", apply: () => reset({ stage: "search", buyerCancelled: true }), notes: ["Buyer cancelled before the courier arrived (US-YG-1.9 AC2); seller sees “do not hand over” (notification S8)."] },
+]);
+</script></body></html>

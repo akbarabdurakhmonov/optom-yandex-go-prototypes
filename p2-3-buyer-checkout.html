@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Buyer: Yandex Go checkout and tracking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>/* Optom.uz prototype base — colours and components taken from the Figma exports (Seller website, Buyer website, Super Admin Old) */
+:root{
+  --green:#00a028; --green-600:#008a22; --green-50:#e6f6ea; --green-100:#cdeed5;
+  --ink:#1b1c1f; --ink-2:#38383b; --muted:#6b7079; --muted-2:#8b9189; --line:#e7e9ec; --line-2:#d9dce1;
+  --bg:#f3f4f6; --card:#ffffff; --red:#d92d20; --red-50:#fdecec; --amber:#ca8504; --amber-50:#fef7c3;
+  --blue:#0c75ed; --blue-50:#e8f2fe; --violet:#7a5af8; --violet-50:#f1edff;
+  --radius:12px; --radius-sm:8px;
+  --font:"Onest",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--font);font-size:14px;line-height:1.45;color:var(--ink);background:var(--bg)}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--green);text-decoration:none}
+/* ---- prototype harness bar ---- */
+.pbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:8px 16px;background:#14161a;color:#e9ecef;font-size:12.5px}
+.pbar b{color:#fff;font-weight:600}
+.pbar .tag{background:#2a2e35;border-radius:6px;padding:2px 8px;color:#c6cbd2}
+.pbar select{background:#23272e;border:1px solid #3a3f47;border-radius:6px;color:#fff;padding:4px 8px;max-width:420px}
+.pbar .sp{flex:1}
+.pbar button{background:#23272e;border:1px solid #3a3f47;border-radius:6px;color:#fff;padding:4px 10px;cursor:pointer}
+.pbar button.on{background:var(--green);border-color:var(--green)}
+.notes{position:fixed;right:16px;bottom:16px;width:380px;max-height:60vh;overflow:auto;z-index:60;background:#fffef5;border:1px solid #eadf9f;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.18);padding:14px 16px;font-size:12.5px;display:none}
+.notes.show{display:block}
+.notes h4{margin:0 0 6px;font-size:13px}
+.notes ul{margin:4px 0 0 16px;padding:0}
+.notes li{margin:3px 0}
+.notes .src{color:#6b6200;font-size:11.5px;margin-top:8px}
+/* ---- seller / admin shell ---- */
+.shell{display:grid;grid-template-columns:232px 1fr;min-height:calc(100vh - 40px)}
+.side{padding:18px 14px;display:flex;flex-direction:column;gap:2px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:600;font-size:26px;letter-spacing:-.5px;margin:0 6px 22px;color:var(--ink)}
+.logo svg{flex:none}
+.side .grp{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin:14px 10px 6px}
+.nav{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;color:var(--ink-2);cursor:default}
+.nav.on{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.05);color:var(--ink);font-weight:500}
+.nav svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;opacity:.8}
+.side .me{margin-top:auto;background:#fff;border-radius:12px;padding:10px;display:flex;gap:10px;align-items:center}
+.ava{width:34px;height:34px;border-radius:50%;background:#d7dbe0;display:grid;place-items:center;font-weight:600;color:#555;flex:none}
+.me small{display:block;color:var(--green);font-size:12px}
+.main{padding:16px 24px 40px 8px;min-width:0}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.iconbtn{width:34px;height:34px;border-radius:9px;background:#fff;border:1px solid var(--line);display:grid;place-items:center}
+.crumbs{color:var(--muted);font-size:13px;display:flex;gap:8px;align-items:center}
+.crumbs b{color:var(--ink);font-weight:500}
+.top .sp{flex:1}
+.lang{background:#fff;border:1px solid var(--line);border-radius:9px;padding:6px 12px;font-size:13px}
+.h1{font-size:26px;font-weight:600;margin:6px 0 14px;display:flex;align-items:center;gap:10px}
+/* ---- components ---- */
+.card{background:var(--card);border-radius:var(--radius);padding:20px 22px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.card+.card{margin-top:12px}
+.card h3{margin:0 0 4px;font-size:18px;font-weight:600}
+.sub{color:var(--muted);margin:0}
+.row{display:flex;gap:12px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sec{display:grid;grid-template-columns:240px 1fr;gap:24px;padding:20px 0;border-top:1px solid var(--line)}
+.sec>.lbl{font-weight:600}
+.sec>.lbl .sub{font-weight:400;font-size:13px;margin-top:4px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:13px;font-weight:500}
+.inp{border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;background:#fff;outline:none;width:100%}
+.inp:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-50)}
+.inp.err{border-color:var(--red)}
+.inp[disabled]{background:#f6f7f9;color:var(--muted)}
+.err-t{color:var(--red);font-size:12.5px}
+.hint{color:var(--muted);font-size:12.5px}
+.btn{border:1px solid transparent;border-radius:10px;padding:10px 18px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.btn.pri{background:var(--green);color:#fff}
+.btn.pri:hover{background:var(--green-600)}
+.btn.pri[disabled]{background:#9fd8ad;cursor:not-allowed}
+.btn.out{background:#fff;border-color:var(--line-2);color:var(--ink)}
+.btn.soft{background:var(--green-50);color:var(--green)}
+.btn.dan{background:var(--red-50);color:var(--red)}
+.btn.danfill{background:var(--red);color:#fff}
+.btn.link{background:none;padding:6px 4px;color:var(--green)}
+.btn.sm{padding:6px 12px;font-size:13px;border-radius:8px}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:8px;padding:3px 9px;font-size:12.5px;font-weight:500;border:1px solid transparent}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.g{background:var(--green-50);color:var(--green);border-color:var(--green-100)}
+.pill.v{background:var(--violet-50);color:var(--violet);border-color:#ddd3ff}
+.pill.a{background:#fff6e0;color:#b54708;border-color:#fde7b0}
+.pill.r{background:var(--red-50);color:var(--red);border-color:#f9c9c4}
+.pill.n{background:#f1f2f4;color:var(--ink-2);border-color:var(--line)}
+.pill.b{background:var(--blue-50);color:var(--blue);border-color:#c9e0fd}
+.alert{border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;border-left:4px solid}
+.alert .ic{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex:none}
+.alert.w{background:var(--amber-50);border-color:var(--amber)} .alert.w .ic{background:var(--amber)}
+.alert.e{background:var(--red-50);border-color:var(--red)} .alert.e .ic{background:var(--red)}
+.alert.i{background:var(--blue-50);border-color:var(--blue)} .alert.i .ic{background:var(--blue)}
+.alert.s{background:var(--green-50);border-color:var(--green)} .alert.s .ic{background:var(--green)}
+.alert b{display:block;margin-bottom:2px}
+.toggle{position:relative;width:40px;height:22px;border-radius:12px;background:#d0d4da;border:none;cursor:pointer;flex:none;transition:.15s}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.toggle.on{background:var(--green)}
+.toggle.on::after{left:21px}
+.toggle[disabled]{opacity:.45;cursor:not-allowed}
+.chk{display:flex;gap:10px;align-items:flex-start;cursor:pointer;margin:8px 0}
+.chk input{width:18px;height:18px;accent-color:var(--green);margin-top:2px;flex:none}
+table.t{width:100%;border-collapse:collapse}
+table.t th{background:#f6f7f9;text-align:left;font-size:12.5px;font-weight:500;color:var(--muted);padding:10px 12px}
+table.t td{border-top:1px solid var(--line);padding:12px;vertical-align:middle}
+.kv{display:flex;gap:10px;padding:12px 0;border-top:1px solid var(--line);align-items:flex-start}
+.kv:first-of-type{border-top:none}
+.kv .k{color:var(--muted)}
+.kv svg{width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:1.6;flex:none;margin-top:1px}
+.modal-bg{position:fixed;inset:0;background:rgba(16,18,22,.45);display:grid;place-items:center;z-index:40;padding:20px}
+.modal{background:#fff;border-radius:16px;width:min(560px,100%);max-height:90vh;overflow:auto;padding:22px 24px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.modal h3{margin:0 0 6px;font-size:19px}
+.modal .acts{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1b1c1f;color:#fff;border-radius:10px;padding:10px 16px;z-index:70;box-shadow:0 10px 30px rgba(0,0,0,.25);font-size:13.5px}
+.digits{display:flex;gap:6px;align-items:flex-end}
+.digit{background:#eceef1;border-radius:10px;width:42px;height:52px;display:grid;place-items:center;font-size:24px;font-weight:600}
+.dsep{font-size:24px;font-weight:600;padding:0 4px 12px}
+.ycard{border:1.5px solid var(--line-2);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:center;cursor:pointer;background:#fff}
+.ycard.on{border-color:var(--green);background:var(--green-50)}
+.ycard .r{width:18px;height:18px;border-radius:50%;border:2px solid var(--line-2);flex:none}
+.ycard.on .r{border:5px solid var(--green)}
+.ycard[aria-disabled=true]{opacity:.5;cursor:not-allowed}
+.yglogo{font-weight:700;letter-spacing:-.3px}
+.yglogo i{font-style:italic;font-weight:800}
+.code-big{font-size:30px;letter-spacing:6px;font-weight:700;background:#f6f7f9;border-radius:10px;padding:8px 14px;display:inline-block}
+.steps{display:flex;justify-content:space-between;position:relative;margin:6px 0 4px}
+.steps::before{content:"";position:absolute;left:20px;right:20px;top:17px;height:2px;background:var(--line)}
+.step{position:relative;text-align:center;flex:1;color:var(--muted);font-size:13px}
+.step .dot{width:36px;height:36px;border-radius:10px;margin:0 auto 6px;background:#fff;border:1.5px solid var(--line-2);display:grid;place-items:center}
+.step.on{color:var(--green);font-weight:500}
+.step.on .dot{background:var(--green-50);border-color:var(--green)}
+.timeline .it{display:flex;gap:12px;padding:8px 0}
+.timeline .it .d{width:30px;height:30px;border-radius:50%;background:#f1f2f4;display:grid;place-items:center;flex:none;font-size:13px}
+.timeline .it small{display:block;color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mb0{margin-bottom:0}
+.spin{width:16px;height:16px;border:2px solid #c8ead1;border-top-color:var(--green);border-radius:50%;animation:sp 0.8s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ann{outline:2px dashed #f0b400;outline-offset:3px;border-radius:12px}
+
+body{background:#fff}
+.strip{background:#1b1c1f;color:#e9ecef;font-size:13px;display:flex;justify-content:space-between;padding:10px 7%}
+.strip span+span{margin-left:28px}
+.bh{display:flex;align-items:center;gap:18px;padding:14px 7%;border-bottom:1px solid var(--line)}
+.bh .logo{margin:0;font-size:30px}
+.srch{flex:1;display:flex;border:2px solid var(--green);border-radius:10px;overflow:hidden}
+.srch input{flex:1;border:none;padding:9px 12px;outline:none}
+.srch button{background:var(--green);color:#fff;border:none;padding:0 20px;font-weight:600}
+.wrapb{padding:24px 7% 60px}
+.cg{display:grid;grid-template-columns:1fr 330px;gap:40px;align-items:start}
+.blk{margin-bottom:26px}
+.blk h2{font-size:19px;margin:0 0 4px;font-weight:600}
+.box{border:1px solid var(--line);border-radius:14px;padding:4px 16px}
+.opt{display:flex;gap:12px;align-items:center;padding:14px 0}
+.opt+.opt{border-top:1px solid var(--line)}
+.radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--line-2);flex:none}
+.radio.on{border:5px solid var(--green)}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.tile{border:1px solid var(--line-2);border-radius:12px;padding:14px;height:84px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;background:#fff}
+.tile.on{border-color:var(--green);background:var(--green-50)}
+.tile .lg{font-size:17px}
+.sumc{border-radius:16px;box-shadow:0 2px 12px rgba(16,24,40,.08);padding:20px 22px}
+.sumc .ln{display:flex;justify-content:space-between;margin:7px 0;color:var(--muted)}
+.sumc .ln b{color:var(--ink);font-weight:600}
+.sumc .tot{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:14px;margin-top:12px;font-size:18px;font-weight:600}
+.big{width:100%;justify-content:center;padding:15px;font-size:16px;border-radius:12px;margin-top:16px}
+.ygopts{display:grid;gap:8px;margin-top:12px}
+.valid{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin-top:10px}
+.demo{background:#fff3c4;border:1px dashed #d9b400;color:#6b5600;border-radius:6px;padding:2px 8px;font-size:11.5px;cursor:pointer}
+.adr{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.oc{display:grid;grid-template-columns:1fr 330px;gap:40px;align-items:start}
+.track{border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-top:14px}
+</style></head><body>
+<div id="app"></div>
+<script>// Prototype harness: scenario picker, notes panel, toasts, icons, seller shell
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const som = n => Math.round(n).toLocaleString("ru-RU").replace(/,/g, " ") + " сум";
+const ICON = {
+  chart: '<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  box: '<svg viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/></svg>',
+  list: '<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+  chat: '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg>',
+  users: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M16 11a3 3 0 1 0 0-6M21 20c0-2-1.5-4-4-4.6"/></svg>',
+  store: '<svg viewBox="0 0 24 24"><path d="M3 9l2-5h14l2 5M4 9v11h16V9M3 9h18M9 20v-6h6v6"/></svg>',
+  gear: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>',
+  spark: '<svg viewBox="0 0 24 24"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></svg>',
+  truck: '<svg viewBox="0 0 24 24"><path d="M2 6h12v10H2zM14 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>',
+  pin: '<svg viewBox="0 0 24 24"><path d="M12 22s7-7 7-12a7 7 0 1 0-14 0c0 5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  phone: '<svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A18 18 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg>',
+  cal: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  card: '<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>',
+  msg: '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg>',
+  user: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
+  bell: '<svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg>',
+  globe: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>',
+  side: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>',
+};
+const LOGO = '<span class="logo"><svg width="34" height="34" viewBox="0 0 34 34"><rect x="12" y="2" width="10" height="30" rx="3" fill="#00a028"/><rect x="2" y="8" width="30" height="5" rx="2.5" fill="#00a028"/><rect x="2" y="15" width="30" height="5" rx="2.5" fill="#00a028"/><rect x="2" y="22" width="30" height="5" rx="2.5" fill="#00a028"/><rect x="15" y="9" width="4" height="17" rx="1" fill="#fff"/></svg>optom</span>';
+const YG = '<span class="yglogo">Yandex <i>Go</i></span>';
+const FARGO = '<span style="font-weight:800;font-style:italic;letter-spacing:-.5px"><span style="color:#e3262e">◤</span> FARGO</span>';
+
+function sellerShell(active, crumbs, content) {
+  const nav = (k, ic, t) => `<div class="nav ${active === k ? "on" : ""}">${ICON[ic]}${t}</div>`;
+  return `<div class="shell"><aside class="side">${LOGO}
+    <div class="grp">Основное</div>${nav("an", "chart", "Аналитика")}${nav("pr", "box", "Товары")}${nav("or", "list", "Заказы")}${nav("ch", "chat", "Чаты")}
+    <div class="grp">Организация</div>${nav("em", "users", "Сотрудники")}${nav("br", "store", "Филиалы")}
+    <div class="grp">Система</div>${nav("se", "gear", "Настройки")}${nav("ta", "spark", "Тарифы")}
+    <div class="me"><span class="ava">НА</span><div><b style="font-weight:600">Николаев А. Д.</b><small>● Подтвержден</small></div></div></aside>
+    <main class="main"><div class="top"><span class="iconbtn">${ICON.side.replace("<svg", '<svg width="18" height="18" fill="none" stroke="#38383b"')}</span><div class="crumbs">${crumbs}</div><span class="sp"></span><span class="iconbtn">${ICON.bell.replace("<svg", '<svg width="18" height="18" fill="none" stroke="#38383b"')}</span><span class="lang">Русский ▾</span></div>${content}</main></div>`;
+}
+
+// ---- harness ----
+const H = { scen: [], cur: null, notesOn: false };
+function harness(meta, scenarios) {
+  H.scen = scenarios;
+  const bar = document.createElement("div"); bar.className = "pbar";
+  bar.innerHTML = `<b>${esc(meta.title)}</b><span class="tag">${esc(meta.stories)}</span><span class="tag">v${meta.version}</span>
+    <span>Scenario:</span><select id="scen">${scenarios.map((s, i) => `<option value="${i}">${i + 1}. ${esc(s.label)}</option>`).join("")}</select>
+    <button id="reset" title="Reset the current scenario">↺ Reset</button><span class="sp"></span>
+    <span style="color:#9aa1ab">Prototype · RU UI · notes in English</span>
+    <button id="ntoggle">Notes for this state</button>`;
+  document.body.prepend(bar);
+  const notes = document.createElement("div"); notes.className = "notes"; notes.id = "notes"; document.body.append(notes);
+  $("#scen").onchange = e => go(+e.target.value);
+  $("#reset").onclick = () => go(+$("#scen").value);
+  $("#ntoggle").onclick = () => { H.notesOn = !H.notesOn; notes.classList.toggle("show", H.notesOn); $("#ntoggle").classList.toggle("on", H.notesOn); };
+  const q = new URLSearchParams(location.hash.slice(1)); go(+(q.get("s") || 0));
+}
+function go(i) {
+  const s = H.scen[i]; if (!s) return; H.cur = s; $("#scen").value = i; history.replaceState(null, "", "#s=" + i);
+  s.apply(); setNotes(s.notes, s.src);
+}
+function setNotes(list, src) {
+  $("#notes").innerHTML = `<h4>What this state shows</h4><ul>${(list || []).map(n => `<li>${n}</li>`).join("")}</ul>${src ? `<div class="src">${src}</div>` : ""}`;
+}
+let toastT;
+function toast(t) { let el = $(".toast"); if (!el) { el = document.createElement("div"); el.className = "toast"; document.body.append(el); } el.textContent = t; el.style.display = "block"; clearTimeout(toastT); toastT = setTimeout(() => el.style.display = "none", 3200); }
+function modal(html) { closeModal(); const bg = document.createElement("div"); bg.className = "modal-bg"; bg.id = "mbg"; bg.innerHTML = `<div class="modal">${html}</div>`; document.body.append(bg); return bg; }
+function closeModal() { const m = $("#mbg"); if (m) m.remove(); }
+
+let S = {}, T = [];
+const clr = () => { T.forEach(clearTimeout); T = []; };
+const GOODS = 4720500;
+function reset(over) {
+  clr(); closeModal();
+  S = Object.assign({ view: "checkout", method: "yg", fit: "both", opt: "courier", loaders: 0, ygAvail: true, porch: "2", flat: "45", floor: "9", door: "", land: "Возле Korzinka", pin: true, other: false, rName: "Азизбек Хамидов", rPhone: "+998 90 222 02 20", phoneErr: "", priceAge: 0, rechecked: false, expired: false, loading: false, payFail: false, stage: "booking", confirmed: false, prices: { courier: 21400, express: 29000, van: 64000 } }, over || {});
+  render();
+}
+function buyerHeader(full) {
+  return `<div class="strip"><span>➤ улица Ислама Каримова, 17</span><span><span>О компании</span><span>Связаться с нами</span><span>Преимущества для продавцов</span><span>Доставка и оплата</span></span></div>
+  <div class="bh">${LOGO}${full ? `<button class="btn pri">☰ Каталог</button><div class="srch"><input placeholder="Что вы ищете?"><button>Найти</button></div><span class="small">Русский · Избранное · Корзина · Профиль</span>` : `<span class="sp" style="flex:1"></span><span class="small muted">Безопасные платежи · Гарантия своевременной отправки · Защита возврата средств</span>`}</div>`;
+}
+const doorToDoor = () => !!(S.porch.trim() && S.flat.trim());
+function ygOptions() {
+  if (S.loading) return `<div class="valid"><span class="spin"></span> Считаем цену доставки…</div>`;
+  const card = (k, title, eta, extra) => {
+    const dis = S.expired;
+    return `<div class="ycard ${S.opt === k ? "on" : ""}" data-o="${k}" aria-disabled="${dis}"><span class="r"></span><div style="flex:1"><b>${title}</b><div class="small muted">${eta}${extra ? " · " + extra : ""}</div></div><b>${som(S.prices[k])}</b></div>`;
+  };
+  let cards = "";
+  if (S.fit === "both") cards = card("courier", "Курьер", "до 10 кг · ~35 мин") + card("express", "На машине", "до 20 кг · ~25 мин");
+  else if (S.fit === "courier") cards = card("courier", "Курьер", "до 10 кг · ~35 мин");
+  else cards = card("van", "Фургон", "до 300 кг · ~40 мин") + `<div class="field mt8"><label>Грузчики</label><select class="inp" id="loaders" style="max-width:260px" ${S.expired ? "disabled" : ""}><option ${S.loaders == 0 ? "selected" : ""}>0</option><option ${S.loaders == 1 ? "selected" : ""}>1</option><option ${S.loaders == 2 ? "selected" : ""}>2</option></select><span class="hint">Водитель не переносит товар; погрузка и разгрузка не включены.</span></div>`;
+  let validity;
+  if (S.expired) validity = `<div class="alert w mt12"><span class="ic">!</span><div><b>Цена доставки устарела</b>Обновите страницу, чтобы увидеть актуальную цену.<div class="mt8"><button class="btn sm pri" id="refresh">Обновить</button></div></div></div>`;
+  else validity = `<div class="valid">${S.rechecked ? '<span class="pill a">Цена доставки обновилась</span>' : ""}<span>Цена действует 10 минут · ${doorToDoor() ? "доставка до двери" : "курьер встретит у подъезда"}</span><span class="demo" id="ff" title="Demo only: simulate 10 minutes passing">⏩ демо: +10 минут</span></div>`;
+  return `<div class="ygopts">${cards}</div>${validity}`;
+}
+function ygBox() { return S.method === "yg" ? `<div class="mt12">${ygOptions()}</div>` : ""; }
+function parts() { const y = $("#ygbox"), m = $("#sumbox"); if (!y) return render(); y.innerHTML = ygBox(); m.innerHTML = sumBox(); bindParts(); }
+function addressBlock() {
+  return `<div class="box"><div class="opt"><span class="radio"></span><div style="flex:1"><b>Самовывоз</b><div class="small muted">г. Самарканд, микрорайон Сагдиана, дом 58А</div></div></div>
+    <div class="opt" style="align-items:flex-start"><span class="radio on" style="margin-top:3px"></span><div style="flex:1"><b>Ташкент, массив Буз-1, 8</b> ${S.pin ? '<span class="pill g" style="margin-left:6px">метка на карте</span>' : '<span class="pill r" style="margin-left:6px">нет метки</span>'}
+      <div class="adr mt12"><div class="field"><label>Подъезд</label><input class="inp" id="porch" value="${esc(S.porch)}"></div><div class="field"><label>Кв. / офис</label><input class="inp" id="flat" value="${esc(S.flat)}"></div><div class="field"><label>Этаж</label><input class="inp" id="floor" value="${esc(S.floor)}"></div><div class="field"><label>Домофон</label><input class="inp" id="door" value="${esc(S.door)}"></div></div>
+      <div class="field mb0"><label>Ориентир, махалля, комментарий курьеру</label><input class="inp" id="land" maxlength="300" value="${esc(S.land)}"></div>
+      ${S.method === "yg" ? `<p class="hint mt8">Укажите подъезд и номер квартиры или офиса, чтобы курьер доставил до двери. Без них курьер встретит вас у подъезда.</p>` : ""}
+      ${!S.pin && S.method === "yg" ? '<p class="err-t">Поставьте метку на карте, чтобы курьер нашёл вас. <a href="#" onclick="S.pin=true;render();return false">Указать на карте</a></p>' : ""}
+    </div></div></div>
+    <div class="box mt12" style="padding:12px 16px"><div class="row" style="justify-content:space-between"><div class="row"><span class="ava">${ICON.user.replace("<svg", '<svg width="18" height="18" fill="none" stroke="#555" stroke-width="1.6"')}</span><div><b>${esc(S.rName)}</b><div class="small muted">${esc(S.rPhone)}</div></div></div><label class="chk" style="margin:0"><input type="checkbox" id="other" ${S.other ? "checked" : ""}><span>Получит другой человек</span></label></div>
+      ${S.other ? `<div class="grid2 mt12"><div class="field"><label>Имя получателя</label><input class="inp" id="rn" value=""></div><div class="field"><label>Телефон получателя</label><input class="inp ${S.phoneErr ? "err" : ""}" id="rp" placeholder="+998 XX XXX XX XX">${S.phoneErr ? `<span class="err-t">${S.phoneErr}</span>` : ""}</div></div>` : ""}
+      ${S.method === "yg" ? '<p class="hint mb0 mt8">Код для курьера придёт в SMS на этот номер.</p>' : ""}</div>`;
+}
+function checkout() {
+  const delivery = S.method === "yg" ? (S.loading ? 0 : S.prices[S.opt]) : 30000;
+  const payDisabled = S.method === "yg" && (S.expired || S.loading || !S.pin);
+  const tiles = [["bts", '<span style="color:#e3262e;font-weight:800">BTS</span>', "Доставка BTS"], ["fargo", FARGO, "Доставка FARGO"]].concat(S.ygAvail ? [["yg", YG, "Доставка Yandex Go"]] : []).concat([["seller", "🚚", "Доставка продавцом"]]);
+  return `${buyerHeader(false)}<div class="wrapb"><div class="row" style="justify-content:space-between"><h1 style="font-size:30px;margin:0 0 20px">Оформление заказа</h1><button class="btn out">↩ Вернуться в корзину</button></div>
+  <div class="cg"><div>
+    <div class="blk"><h2>Способ получения</h2>${addressBlock()}</div>
+    <div class="blk"><h2>Способ оплаты</h2><p class="sub">Доступна оплата картами UZCARD, HUMO, VISA и Mastercard</p><div class="row mt12"><div class="tile on" style="width:150px"><span>Humo</span><b>9860 **** 3456</b></div><div class="tile" style="width:150px"><span>Uzcard</span><b>7844 **** 0942</b></div></div></div>
+    <div class="blk"><h2>Способ доставки</h2><p class="sub">Стоимость доставки варьируется, так как товары отправляются от разных продавцов и из разных складов</p>
+      <div class="tiles">${tiles.map(t => `<div class="tile ${S.method === t[0] ? "on" : ""}" data-m="${t[0]}"><span class="lg">${t[1]}</span><span>${t[2]}</span></div>`).join("")}</div>
+      <div id="ygbox">${ygBox()}</div>
+      ${S.payFail ? `<div class="alert e mt12"><span class="ic">!</span><div>Yandex Go больше недоступен для этого заказа. Выберите другой способ доставки.</div></div>` : ""}</div>
+  </div><div id="sumbox">${sumBox()}</div></div></div>`;
+}
+function sumBox() {
+  const delivery = S.method === "yg" ? (S.loading ? 0 : S.prices[S.opt]) : 30000;
+  const payDisabled = S.method === "yg" && (S.expired || S.loading || !S.pin);
+  return `<div class="sumc"><h3 style="margin:0 0 8px">Ваша корзина</h3><div class="ln">Товары (3)<b>${som(GOODS)}</b></div><div class="ln">Скидка<b>0 сум</b></div><div class="ln">Доставка<b>${S.method === "yg" && S.loading ? "…" : som(delivery)}</b></div>
+    <div class="tot"><span>Итого</span><span>${som(GOODS + delivery)}</span></div>
+    <button class="btn pri big" id="pay" ${payDisabled ? "disabled" : ""}>Оформить заказ</button>
+    <p class="small muted mt12">Нажимая «Оформить заказ», вы принимаете условия пользовательских соглашений. Если курьер не сможет вас найти, посылка вернётся продавцу: вам вернут стоимость товара за вычетом платы Яндекса за возврат, стоимость доставки не возвращается.</p></div>`;
+}
+const BSTAGE = {
+  booking: ["Принято", 0, "Вызываем курьера", "Продавец подтвердил заказ и вызывает курьера."],
+  search: ["Принято", 0, "Ищем курьера", "Обычно курьер находится за 5–15 минут."],
+  assigned: ["Упаковка", 1, "Курьер назначен: Дилшод Т., Chevrolet Cobalt, белый", "Курьер едет к продавцу."],
+  atpickup: ["Упаковка", 1, "Курьер у продавца", ""],
+  intransit: ["В пути", 2, "В пути", "Курьер везёт ваш заказ."],
+  atbuyer: ["В пути", 2, "Курьер у вашей двери", "Сначала проверьте посылку, затем назовите код из SMS."],
+  delivered: ["Доставлено", 3, "Доставлено", ""],
+  returning: ["В пути", 2, "Не удалось доставить заказ", "Посылка возвращается продавцу. Вам вернут стоимость товара за вычетом платы Яндекса за возврат; стоимость доставки не возвращается. Поддержка свяжется с вами."],
+  cancelled: ["Принято", -1, "Заказ отменён", "Возврат: 4 741 900 сум. Деньги поступят на карту в течение 1–3 рабочих дней."],
+};
+function orderPage() {
+  const st = BSTAGE[S.stage], canCancel = ["booking", "search", "assigned"].includes(S.stage);
+  const steps = ["Принято", "Упаковка", "В пути", "Доставлено"].map((t, i) => `<div class="step ${i <= st[1] ? "on" : ""}"><div class="dot">${["▤", "▢", "⛟", "✓"][i]}</div>${t}</div>`).join("");
+  const courier = ["assigned", "intransit", "atbuyer"].includes(S.stage);
+  return `${buyerHeader(true)}<div class="wrapb"><h1 style="font-size:28px;margin:0 0 18px">Заказ: 68726458</h1><div class="oc"><div>
+    <div class="steps">${steps}</div>
+    <div class="track"><div class="row" style="justify-content:space-between"><div class="row"><span style="font-size:18px">${YG}</span><b>${st[2]}</b></div>${courier ? '<button class="btn sm soft" id="track">Отследить курьера ↗</button>' : ""}</div>
+      ${st[3] ? `<p class="sub mt8">${st[3]}</p>` : ""}
+      ${["assigned", "intransit", "atbuyer"].includes(S.stage) ? '<div class="alert i mt12"><span class="ic">i</span><div>Проверьте посылку, прежде чем назвать код из SMS. О повреждениях сообщайте курьеру сразу.</div></div>' : ""}
+      ${S.stage === "atpickup" ? '<p class="hint mt8">Курьер уже у продавца. Заказ больше нельзя отменить.</p>' : ""}
+      ${S.stage === "delivered" ? (S.confirmed ? '<p class="mt8"><span class="pill g">Вы подтвердили получение</span></p>' : '<div class="row mt12"><button class="btn pri sm" id="receipt">Подтвердить получение</button><span class="hint">Необязательно: заказ завершится автоматически.</span></div>') : ""}
+      ${canCancel ? '<div class="mt12"><button class="btn dan sm" id="bcancel">Отменить заказ</button></div>' : ""}</div>
+    <div class="row mt16" style="gap:14px"><span class="thumb" style="width:76px;height:76px;border-radius:10px;background:#eef0ec"></span><div><b>Кресло Ганти Рогожка Зеленый/Оливковый</b><div class="small muted">Цвет: Лавандовый</div></div></div>
+    <h3 class="mt16">История активности</h3><div class="timeline"><div class="it"><span class="d">▤</span><div>Ваш заказ подтвержден<small>14 октября 2026 г. в 14:33</small></div></div></div>
+  </div><div><div class="sumc"><h3 style="margin:0 0 8px">Ваша корзина</h3><div class="ln">3 товара, 8 шт.<b>${som(GOODS)}</b></div><div class="ln">Доставка<b>${som(21400)}</b></div><div class="tot"><span>Итого</span><span>${som(GOODS + 21400)}</span></div><div class="small muted mt12" style="background:#f6f7f9;border-radius:8px;padding:8px 10px">Оплачено картой онлайн Humo **2463</div></div>
+    <div class="sumc mt16"><h3 style="margin:0 0 8px">Получатель</h3><b>Азизбек Хамидов</b><div class="small muted">+998 90 222 02 20</div><div class="small mt8">Ташкент, массив Буз-1, 8 · подъезд 2, кв./офис 45 · до двери</div></div></div></div></div>`;
+}
+function render() { $("#app").innerHTML = S.view === "checkout" ? checkout() : orderPage(); bind(); }
+function reprice() { S.loading = true; parts(); T.push(setTimeout(() => { S.loading = false; S.priceAge = 0; parts(); }, 700)); }
+function bind() {
+  document.querySelectorAll(".tile[data-m]").forEach(t => t.onclick = () => { S.method = t.dataset.m; S.payFail = false; if (S.method === "yg") reprice(); else render(); });
+  bindParts();
+  ["porch", "flat"].forEach(id => { const el = $("#" + id); if (el) el.onchange = e => { const before = doorToDoor(); S[id] = e.target.value; if (S.method === "yg" && before !== doorToDoor()) { toast(doorToDoor() ? "Доставка до двери — цена пересчитана" : "Курьер встретит у подъезда — цена пересчитана"); reprice(); } }; });
+  ["floor", "door", "land"].forEach(id => { const el = $("#" + id); if (el) el.onchange = e => { S[id] = e.target.value; }; });
+  const oth = $("#other"); if (oth) oth.onchange = e => { S.other = e.target.checked; S.phoneErr = ""; render(); };
+  const rp = $("#rp"); if (rp) rp.onblur = e => { const v = e.target.value.replace(/\s/g, ""); S.phoneErr = /^\+998\d{9}$/.test(v) ? "" : "Введите номер в формате +998 XX XXX XX XX."; if (S.phoneErr) render(); };
+  const bc = $("#bcancel"); if (bc) bc.onclick = buyerCancel;
+  const rc = $("#receipt"); if (rc) rc.onclick = () => { S.confirmed = true; render(); };
+  const tr = $("#track"); if (tr) tr.onclick = () => toast("Откроется ссылка отслеживания Яндекса в браузере (в прототипе не открывается).");
+}
+function bindParts() {
+  document.querySelectorAll(".ycard[data-o]").forEach(c => c.onclick = () => { if (S.expired) return; S.opt = c.dataset.o; reprice(); });
+  const ld = $("#loaders"); if (ld) ld.onchange = e => { S.loaders = +e.target.value; S.prices.van = 64000 + S.loaders * 25000; reprice(); };
+  const ff = $("#ff"); if (ff) ff.onclick = () => { if (!S.rechecked) { S.loading = true; parts(); T.push(setTimeout(() => { S.loading = false; S.rechecked = true; S.prices.courier = 22100; S.prices.express = 29600; parts(); }, 800)); } else { S.expired = true; parts(); } };
+  const rf = $("#refresh"); if (rf) rf.onclick = () => reset({ fit: S.fit, opt: S.opt });
+  const pay = $("#pay"); if (pay) pay.onclick = () => { if (S.method === "yg" && S.ygWillFail) { S.payFail = true; S.ygAvail = false; S.method = ""; render(); return; } modal(`<h3>Заказ оформлен</h3><p class="sub">Оплата прошла.${S.method === "yg" ? " Доставка Yandex Go: " + som(S.prices[S.opt]) + " — цена зафиксирована и не изменится." : ""}</p><div class="acts"><button class="btn pri" id="toorder">Перейти к заказу</button></div>`); $("#toorder").onclick = () => { closeModal(); S.view = "order"; S.stage = "booking"; render(); }; };
+}
+function buyerCancel() {
+  modal(`<h3>Отменить заказ?</h3><p class="sub">Вы получите полный возврат: ${som(GOODS + 21400)}.</p><div class="acts"><button class="btn out" onclick="closeModal()">Оставить заказ</button><button class="btn danfill" id="dobc">Отменить заказ</button></div>`);
+  $("#dobc").onclick = () => { closeModal(); S.stage = "cancelled"; render(); toast("Заказ отменён. Возврат оформлен."); };
+}
+const O = s => () => reset({ view: "order", stage: s });
+harness({ title: "P2.3 Buyer: Yandex Go at checkout and order tracking", stories: "US-YG-1.4, 1.8, 1.9", version: "1.0" }, [
+  { label: "Checkout: courier and express both fit", apply: () => reset(), notes: ["“Доставка Yandex Go” tile from the existing checkout design opens the options that fit (US-YG-1.4 AC2): courier and car, cheaper preselected.", "Price = Yandex estimate, no markup; shown in “Ваша корзина” (AC6).", "Changing the option re-prices (AC9)."], src: "Base screen: Buyer website → Оформление заказа (Figma, Website New)." },
+  { label: "Checkout: only one type fits", apply: () => reset({ fit: "courier" }), notes: ["Only courier fits → one card, no choice (AC3)."] },
+  { label: "Checkout: only cargo fits (loaders)", apply: () => reset({ fit: "cargo", opt: "van" }), notes: ["Heavy/large order → only the smallest vehicle that fits; loaders 0 by default with the note (AC4). No “Change vehicle” in the MVP."] },
+  { label: "Checkout: door-to-door from the address", apply: () => reset({ porch: "", flat: "" }), notes: ["Entrance + apartment/office empty → courier meets at the entrance (skip_door_to_door = true) (AC10, BR-Y20).", "Fill in Подъезд and Кв./офис and leave the field → re-priced as door-to-door. Floor and door code do not change it."] },
+  { label: "Checkout: price expires → one re-check → refresh", apply: () => reset(), notes: ["Press the yellow demo chip to simulate 10 minutes: first time → one automatic re-check, “Цена доставки обновилась” (AC7).", "Second time → option greyed out, “Цена доставки устарела … Обновить”, payment blocked (AC8)."] },
+  { label: "Checkout: Yandex Go not available", apply: () => reset({ ygAvail: false, method: "bts" }), notes: ["Any condition fails (seller paused, branch off, outside Tashkent, no weight…) → the tile is simply not shown, no error (AC1)."] },
+  { label: "Checkout: seller paused while buyer was paying", apply: () => reset({ ygWillFail: true }), notes: ["Click Оформить заказ: backend re-checks availability; Yandex Go rejected, no payment taken (AC14, US-YG-1.3 AC9)."] },
+  { label: "Checkout: recipient is someone else", apply: () => reset({ other: true }), notes: ["“Получит другой человек” asks for name and phone; the SMS code goes to this phone (AC12). Leave the phone field with a wrong value to see the error."] },
+  { label: "Order: courier being booked (cancel = full refund)", apply: O("booking"), notes: ["Buyer sees “Вызываем курьера”, never the Yandex offer (US-YG-1.6 AC12).", "<b>Отменить заказ</b> available until the courier reaches the seller (US-YG-1.9 AC2)."], src: "Base screen: Buyer website → Заказ (Figma, Website New)." },
+  { label: "Order: courier assigned + tracking", apply: O("assigned"), notes: ["Courier name and car, “Отследить курьера” opens the Yandex link (US-YG-1.8 AC5).", "Cancel still possible before the courier arrives at the seller."] },
+  { label: "Order: courier at the seller (no cancel)", apply: O("atpickup"), notes: ["From AtPickup the cancel button is hidden with the explanation (US-YG-1.9 AC3)."] },
+  { label: "Order: courier at the door", apply: O("atbuyer"), notes: ["“Check the parcel first, then tell the code from the SMS” (US-YG-1.8 AC6). The app never shows the delivery code."] },
+  { label: "Order: delivered (confirm receipt optional)", apply: O("delivered"), notes: ["Order completes automatically at delivered_finish; “Подтвердить получение” is optional (US-YG-1.8 AC8, BR-Y24)."] },
+  { label: "Order: delivery failed, parcel returning", apply: O("returning"), notes: ["Refund rule shown: goods minus the Yandex return fee, delivery fee kept (US-YG-1.10 AC7–AC8, BR-Y9)."] },
+]);
+</script></body></html>

@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seller: Yandex Go settings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>/* Optom.uz prototype base — colours and components taken from the Figma exports (Seller website, Buyer website, Super Admin Old) */
+:root{
+  --green:#00a028; --green-600:#008a22; --green-50:#e6f6ea; --green-100:#cdeed5;
+  --ink:#1b1c1f; --ink-2:#38383b; --muted:#6b7079; --muted-2:#8b9189; --line:#e7e9ec; --line-2:#d9dce1;
+  --bg:#f3f4f6; --card:#ffffff; --red:#d92d20; --red-50:#fdecec; --amber:#ca8504; --amber-50:#fef7c3;
+  --blue:#0c75ed; --blue-50:#e8f2fe; --violet:#7a5af8; --violet-50:#f1edff;
+  --radius:12px; --radius-sm:8px;
+  --font:"Onest",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--font);font-size:14px;line-height:1.45;color:var(--ink);background:var(--bg)}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--green);text-decoration:none}
+/* ---- prototype harness bar ---- */
+.pbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:8px 16px;background:#14161a;color:#e9ecef;font-size:12.5px}
+.pbar b{color:#fff;font-weight:600}
+.pbar .tag{background:#2a2e35;border-radius:6px;padding:2px 8px;color:#c6cbd2}
+.pbar select{background:#23272e;border:1px solid #3a3f47;border-radius:6px;color:#fff;padding:4px 8px;max-width:420px}
+.pbar .sp{flex:1}
+.pbar button{background:#23272e;border:1px solid #3a3f47;border-radius:6px;color:#fff;padding:4px 10px;cursor:pointer}
+.pbar button.on{background:var(--green);border-color:var(--green)}
+.notes{position:fixed;right:16px;bottom:16px;width:380px;max-height:60vh;overflow:auto;z-index:60;background:#fffef5;border:1px solid #eadf9f;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.18);padding:14px 16px;font-size:12.5px;display:none}
+.notes.show{display:block}
+.notes h4{margin:0 0 6px;font-size:13px}
+.notes ul{margin:4px 0 0 16px;padding:0}
+.notes li{margin:3px 0}
+.notes .src{color:#6b6200;font-size:11.5px;margin-top:8px}
+/* ---- seller / admin shell ---- */
+.shell{display:grid;grid-template-columns:232px 1fr;min-height:calc(100vh - 40px)}
+.side{padding:18px 14px;display:flex;flex-direction:column;gap:2px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:600;font-size:26px;letter-spacing:-.5px;margin:0 6px 22px;color:var(--ink)}
+.logo svg{flex:none}
+.side .grp{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin:14px 10px 6px}
+.nav{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;color:var(--ink-2);cursor:default}
+.nav.on{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.05);color:var(--ink);font-weight:500}
+.nav svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;opacity:.8}
+.side .me{margin-top:auto;background:#fff;border-radius:12px;padding:10px;display:flex;gap:10px;align-items:center}
+.ava{width:34px;height:34px;border-radius:50%;background:#d7dbe0;display:grid;place-items:center;font-weight:600;color:#555;flex:none}
+.me small{display:block;color:var(--green);font-size:12px}
+.main{padding:16px 24px 40px 8px;min-width:0}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.iconbtn{width:34px;height:34px;border-radius:9px;background:#fff;border:1px solid var(--line);display:grid;place-items:center}
+.crumbs{color:var(--muted);font-size:13px;display:flex;gap:8px;align-items:center}
+.crumbs b{color:var(--ink);font-weight:500}
+.top .sp{flex:1}
+.lang{background:#fff;border:1px solid var(--line);border-radius:9px;padding:6px 12px;font-size:13px}
+.h1{font-size:26px;font-weight:600;margin:6px 0 14px;display:flex;align-items:center;gap:10px}
+/* ---- components ---- */
+.card{background:var(--card);border-radius:var(--radius);padding:20px 22px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.card+.card{margin-top:12px}
+.card h3{margin:0 0 4px;font-size:18px;font-weight:600}
+.sub{color:var(--muted);margin:0}
+.row{display:flex;gap:12px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sec{display:grid;grid-template-columns:240px 1fr;gap:24px;padding:20px 0;border-top:1px solid var(--line)}
+.sec>.lbl{font-weight:600}
+.sec>.lbl .sub{font-weight:400;font-size:13px;margin-top:4px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:13px;font-weight:500}
+.inp{border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;background:#fff;outline:none;width:100%}
+.inp:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-50)}
+.inp.err{border-color:var(--red)}
+.inp[disabled]{background:#f6f7f9;color:var(--muted)}
+.err-t{color:var(--red);font-size:12.5px}
+.hint{color:var(--muted);font-size:12.5px}
+.btn{border:1px solid transparent;border-radius:10px;padding:10px 18px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.btn.pri{background:var(--green);color:#fff}
+.btn.pri:hover{background:var(--green-600)}
+.btn.pri[disabled]{background:#9fd8ad;cursor:not-allowed}
+.btn.out{background:#fff;border-color:var(--line-2);color:var(--ink)}
+.btn.soft{background:var(--green-50);color:var(--green)}
+.btn.dan{background:var(--red-50);color:var(--red)}
+.btn.danfill{background:var(--red);color:#fff}
+.btn.link{background:none;padding:6px 4px;color:var(--green)}
+.btn.sm{padding:6px 12px;font-size:13px;border-radius:8px}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:8px;padding:3px 9px;font-size:12.5px;font-weight:500;border:1px solid transparent}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.g{background:var(--green-50);color:var(--green);border-color:var(--green-100)}
+.pill.v{background:var(--violet-50);color:var(--violet);border-color:#ddd3ff}
+.pill.a{background:#fff6e0;color:#b54708;border-color:#fde7b0}
+.pill.r{background:var(--red-50);color:var(--red);border-color:#f9c9c4}
+.pill.n{background:#f1f2f4;color:var(--ink-2);border-color:var(--line)}
+.pill.b{background:var(--blue-50);color:var(--blue);border-color:#c9e0fd}
+.alert{border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;border-left:4px solid}
+.alert .ic{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex:none}
+.alert.w{background:var(--amber-50);border-color:var(--amber)} .alert.w .ic{background:var(--amber)}
+.alert.e{background:var(--red-50);border-color:var(--red)} .alert.e .ic{background:var(--red)}
+.alert.i{background:var(--blue-50);border-color:var(--blue)} .alert.i .ic{background:var(--blue)}
+.alert.s{background:var(--green-50);border-color:var(--green)} .alert.s .ic{background:var(--green)}
+.alert b{display:block;margin-bottom:2px}
+.toggle{position:relative;width:40px;height:22px;border-radius:12px;background:#d0d4da;border:none;cursor:pointer;flex:none;transition:.15s}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.toggle.on{background:var(--green)}
+.toggle.on::after{left:21px}
+.toggle[disabled]{opacity:.45;cursor:not-allowed}
+.chk{display:flex;gap:10px;align-items:flex-start;cursor:pointer;margin:8px 0}
+.chk input{width:18px;height:18px;accent-color:var(--green);margin-top:2px;flex:none}
+table.t{width:100%;border-collapse:collapse}
+table.t th{background:#f6f7f9;text-align:left;font-size:12.5px;font-weight:500;color:var(--muted);padding:10px 12px}
+table.t td{border-top:1px solid var(--line);padding:12px;vertical-align:middle}
+.kv{display:flex;gap:10px;padding:12px 0;border-top:1px solid var(--line);align-items:flex-start}
+.kv:first-of-type{border-top:none}
+.kv .k{color:var(--muted)}
+.kv svg{width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:1.6;flex:none;margin-top:1px}
+.modal-bg{position:fixed;inset:0;background:rgba(16,18,22,.45);display:grid;place-items:center;z-index:40;padding:20px}
+.modal{background:#fff;border-radius:16px;width:min(560px,100%);max-height:90vh;overflow:auto;padding:22px 24px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.modal h3{margin:0 0 6px;font-size:19px}
+.modal .acts{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1b1c1f;color:#fff;border-radius:10px;padding:10px 16px;z-index:70;box-shadow:0 10px 30px rgba(0,0,0,.25);font-size:13.5px}
+.digits{display:flex;gap:6px;align-items:flex-end}
+.digit{background:#eceef1;border-radius:10px;width:42px;height:52px;display:grid;place-items:center;font-size:24px;font-weight:600}
+.dsep{font-size:24px;font-weight:600;padding:0 4px 12px}
+.ycard{border:1.5px solid var(--line-2);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:center;cursor:pointer;background:#fff}
+.ycard.on{border-color:var(--green);background:var(--green-50)}
+.ycard .r{width:18px;height:18px;border-radius:50%;border:2px solid var(--line-2);flex:none}
+.ycard.on .r{border:5px solid var(--green)}
+.ycard[aria-disabled=true]{opacity:.5;cursor:not-allowed}
+.yglogo{font-weight:700;letter-spacing:-.3px}
+.yglogo i{font-style:italic;font-weight:800}
+.code-big{font-size:30px;letter-spacing:6px;font-weight:700;background:#f6f7f9;border-radius:10px;padding:8px 14px;display:inline-block}
+.steps{display:flex;justify-content:space-between;position:relative;margin:6px 0 4px}
+.steps::before{content:"";position:absolute;left:20px;right:20px;top:17px;height:2px;background:var(--line)}
+.step{position:relative;text-align:center;flex:1;color:var(--muted);font-size:13px}
+.step .dot{width:36px;height:36px;border-radius:10px;margin:0 auto 6px;background:#fff;border:1.5px solid var(--line-2);display:grid;place-items:center}
+.step.on{color:var(--green);font-weight:500}
+.step.on .dot{background:var(--green-50);border-color:var(--green)}
+.timeline .it{display:flex;gap:12px;padding:8px 0}
+.timeline .it .d{width:30px;height:30px;border-radius:50%;background:#f1f2f4;display:grid;place-items:center;flex:none;font-size:13px}
+.timeline .it small{display:block;color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mb0{margin-bottom:0}
+.spin{width:16px;height:16px;border:2px solid #c8ead1;border-top-color:var(--green);border-radius:50%;animation:sp 0.8s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ann{outline:2px dashed #f0b400;outline-offset:3px;border-radius:12px}
+
+.ygbox{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#fcfcfd}
+.brow td:first-child{font-weight:500}
+.ro .toggle,.ro .btn{pointer-events:none;opacity:.5}
+</style></head><body>
+<div id="app"></div>
+<script>// Prototype harness: scenario picker, notes panel, toasts, icons, seller shell
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const som = n => Math.round(n).toLocaleString("ru-RU").replace(/,/g, " ") + " сум";
+const ICON = {
+  chart: '<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  box: '<svg viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/></svg>',
+  list: '<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+  chat: '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg>',
+  users: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M16 11a3 3 0 1 0 0-6M21 20c0-2-1.5-4-4-4.6"/></svg>',
+  store: '<svg viewBox="0 0 24 24"><path d="M3 9l2-5h14l2 5M4 9v11h16V9M3 9h18M9 20v-6h6v6"/></svg>',
+  gear: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>',
+  spark: '<svg viewBox="0 0 24 24"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></svg>',
+  truck: '<svg viewBox="0 0 24 24"><path d="M2 6h12v10H2zM14 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>',
+  pin: '<svg viewBox="0 0 24 24"><path d="M12 22s7-7 7-12a7 7 0 1 0-14 0c0 5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  phone: '<svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A18 18 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg>',
+  cal: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  card: '<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>',
+  msg: '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg>',
+  user: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
+  bell: '<svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg>',
+  globe: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>',
+  side: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>',
+};
+const LOGO = '<span class="logo"><svg width="34" height="34" viewBox="0 0 34 34"><rect x="12" y="2" width="10" height="30" rx="3" fill="#00a028"/><rect x="2" y="8" width="30" height="5" rx="2.5" fill="#00a028"/><rect x="2" y="15" width="30" height="5" rx="2.5" fill="#00a028"/><rect x="2" y="22" width="30" height="5" rx="2.5" fill="#00a028"/><rect x="15" y="9" width="4" height="17" rx="1" fill="#fff"/></svg>optom</span>';
+const YG = '<span class="yglogo">Yandex <i>Go</i></span>';
+const FARGO = '<span style="font-weight:800;font-style:italic;letter-spacing:-.5px"><span style="color:#e3262e">◤</span> FARGO</span>';
+
+function sellerShell(active, crumbs, content) {
+  const nav = (k, ic, t) => `<div class="nav ${active === k ? "on" : ""}">${ICON[ic]}${t}</div>`;
+  return `<div class="shell"><aside class="side">${LOGO}
+    <div class="grp">Основное</div>${nav("an", "chart", "Аналитика")}${nav("pr", "box", "Товары")}${nav("or", "list", "Заказы")}${nav("ch", "chat", "Чаты")}
+    <div class="grp">Организация</div>${nav("em", "users", "Сотрудники")}${nav("br", "store", "Филиалы")}
+    <div class="grp">Система</div>${nav("se", "gear", "Настройки")}${nav("ta", "spark", "Тарифы")}
+    <div class="me"><span class="ava">НА</span><div><b style="font-weight:600">Николаев А. Д.</b><small>● Подтвержден</small></div></div></aside>
+    <main class="main"><div class="top"><span class="iconbtn">${ICON.side.replace("<svg", '<svg width="18" height="18" fill="none" stroke="#38383b"')}</span><div class="crumbs">${crumbs}</div><span class="sp"></span><span class="iconbtn">${ICON.bell.replace("<svg", '<svg width="18" height="18" fill="none" stroke="#38383b"')}</span><span class="lang">Русский ▾</span></div>${content}</main></div>`;
+}
+
+// ---- harness ----
+const H = { scen: [], cur: null, notesOn: false };
+function harness(meta, scenarios) {
+  H.scen = scenarios;
+  const bar = document.createElement("div"); bar.className = "pbar";
+  bar.innerHTML = `<b>${esc(meta.title)}</b><span class="tag">${esc(meta.stories)}</span><span class="tag">v${meta.version}</span>
+    <span>Scenario:</span><select id="scen">${scenarios.map((s, i) => `<option value="${i}">${i + 1}. ${esc(s.label)}</option>`).join("")}</select>
+    <button id="reset" title="Reset the current scenario">↺ Reset</button><span class="sp"></span>
+    <span style="color:#9aa1ab">Prototype · RU UI · notes in English</span>
+    <button id="ntoggle">Notes for this state</button>`;
+  document.body.prepend(bar);
+  const notes = document.createElement("div"); notes.className = "notes"; notes.id = "notes"; document.body.append(notes);
+  $("#scen").onchange = e => go(+e.target.value);
+  $("#reset").onclick = () => go(+$("#scen").value);
+  $("#ntoggle").onclick = () => { H.notesOn = !H.notesOn; notes.classList.toggle("show", H.notesOn); $("#ntoggle").classList.toggle("on", H.notesOn); };
+  const q = new URLSearchParams(location.hash.slice(1)); go(+(q.get("s") || 0));
+}
+function go(i) {
+  const s = H.scen[i]; if (!s) return; H.cur = s; $("#scen").value = i; history.replaceState(null, "", "#s=" + i);
+  s.apply(); setNotes(s.notes, s.src);
+}
+function setNotes(list, src) {
+  $("#notes").innerHTML = `<h4>What this state shows</h4><ul>${(list || []).map(n => `<li>${n}</li>`).join("")}</ul>${src ? `<div class="src">${src}</div>` : ""}`;
+}
+let toastT;
+function toast(t) { let el = $(".toast"); if (!el) { el = document.createElement("div"); el.className = "toast"; document.body.append(el); } el.textContent = t; el.style.display = "block"; clearTimeout(toastT); toastT = setTimeout(() => el.style.display = "none", 3200); }
+function modal(html) { closeModal(); const bg = document.createElement("div"); bg.className = "modal-bg"; bg.id = "mbg"; bg.innerHTML = `<div class="modal">${html}</div>`; document.body.append(bg); return bg; }
+function closeModal() { const m = $("#mbg"); if (m) m.remove(); }
+
+const BR0 = [
+  { n: "Чиланзар", a: "Ташкент, ул. Бунёдкор, 12", ready: true, tash: true, on: false },
+  { n: "Юнусабад", a: "Ташкент, ул. Амира Темура, 108", ready: true, tash: true, on: false },
+  { n: "Сергели", a: "Ташкент, ул. Янги Сергели, 5", ready: false, tash: true, on: false },
+  { n: "Самарканд", a: "Самарканд, мкр. Сагдиана, 58А", ready: true, tash: false, on: false },
+];
+let S = {};
+function reset(over) { S = Object.assign({ mode: "none", token: "", c1: false, c2: false, err: "", checking: false, branches: JSON.parse(JSON.stringify(BR0)), status: "connected", pausedAt: "", hasBranch: true, openShip: 2, role: "owner", replacing: false }, over || {}); render(); }
+
+function statusPill() {
+  const m = { none: '<span class="pill n">Не подключено</span>', connected: '<span class="pill g">Подключено</span>', paused: `<span class="pill a">Приостановлено вами · с ${S.pausedAt}</span>`, token: '<span class="pill r">Токен недействителен</span>', balance: '<span class="pill r">Проблема с балансом</span>', admin: '<span class="pill r">Отключено Optom.uz</span>' };
+  return S.mode === "none" || S.mode === "form" ? m.none : m[S.status];
+}
+function connectForm() {
+  const valid = S.token.trim().length >= 10 && S.c1 && S.c2 && S.hasBranch && !S.checking;
+  return `<div class="field"><label>API-токен</label>
+      <input class="inp ${S.err ? "err" : ""}" id="tok" type="password" placeholder="Вставьте токен из кабинета Яндекс Доставки" value="${esc(S.token)}">
+      ${S.err ? `<span class="err-t">${S.err}</span>` : `<span class="hint">Кабинет Яндекс Доставки → Интеграция → Получить токен. <a href="#" onclick="return false">Как получить токен</a></span>`}</div>
+    <label class="chk"><input type="checkbox" id="c1" ${S.c1 ? "checked" : ""}><span>Я не буду отправлять товары, запрещённые Яндекс Доставкой. <a href="#" onclick="return false">Список запрещённых товаров</a></span></label>
+    <label class="chk"><input type="checkbox" id="c2" ${S.c2 ? "checked" : ""}><span>Я отвечаю за правильный вес и размеры своих товаров. Если курьер или машина не смогут забрать посылку из-за неверных данных, я оплачиваю отмену и разницу в цене нового заказа.</span></label>
+    ${S.hasBranch ? "" : '<div class="alert w mt8"><span class="ic">!</span><div>Сначала добавьте филиал с меткой на карте. <a href="#" onclick="return false">Перейти к филиалам</a></div></div>'}
+    <div class="row mt12"><button class="btn pri" id="check" ${valid ? "" : "disabled"}>${S.checking ? '<span class="spin"></span> Проверяем…' : "Проверить подключение и сохранить"}</button><button class="btn out" id="cancelf">Отмена</button></div>`;
+}
+function branchTable(disabled) {
+  return `<table class="t mt12"><thead><tr><th>Филиал</th><th>Адрес</th><th>Готовность</th><th style="width:90px">Yandex Go</th></tr></thead><tbody>
+  ${S.branches.map((b, i) => {
+    const can = b.ready && !disabled;
+    return `<tr class="brow"><td>${b.n}</td><td class="muted">${b.a}</td>
+      <td>${b.ready ? '<span class="pill g">Готов</span>' : '<span class="small" style="color:var(--amber)">Добавьте телефон, email и часы работы этого филиала. <a href="#" onclick="return false">Изменить филиал</a></span>'}${b.msg ? `<div class="err-t mt8">${b.msg}</div>` : ""}</td>
+      <td>${b.busy ? '<span class="spin"></span>' : `<button class="toggle ${b.on ? "on" : ""}" data-b="${i}" ${can ? "" : "disabled"} aria-label="Yandex Go для ${b.n}"></button>`}</td></tr>`;
+  }).join("")}</tbody></table>`;
+}
+function connectedBlock() {
+  const st = S.status, ro = S.role === "employee";
+  let banner = "";
+  if (st === "token") banner = `<div class="alert e mt12"><span class="ic">!</span><div><b>Токен Яндекс Доставки перестал работать</b>Например, после смены пароля в кабинете Яндекса. Добавьте новый токен — до этого покупатели не видят Yandex Go.</div></div>`;
+  if (st === "balance") banner = `<div class="alert w mt12"><span class="ic">!</span><div><b>Проблема с балансом</b>Пополните баланс Яндекс Доставки — до этого Yandex Go отключён. <div class="mt8"><button class="btn sm out" id="recheck">Проверить снова</button></div></div></div>`;
+  if (st === "admin") banner = `<div class="alert e mt12"><span class="ic">!</span><div><b>Отключено Optom.uz</b>Обратитесь в поддержку.</div></div>`;
+  if (st === "paused") banner = `<div class="alert w mt12"><span class="ic">!</span><div><b>Yandex Go приостановлен</b>Покупатели не видят Yandex Go ни в одном филиале. Уже оплаченные заказы обрабатываются как обычно.</div></div>`;
+  const anyOn = S.branches.some(b => b.on);
+  const dis = st === "admin" || st === "token" || st === "balance" || ro;
+  return `<div class="row" style="justify-content:space-between;flex-wrap:wrap">
+      <div class="row"><span class="muted">Токен:</span> <b>••••3f9a</b></div>
+      <div class="row">${S.replacing ? "" : `<button class="btn sm out" id="replace" ${st === "admin" || ro ? "disabled" : ""}>Заменить токен</button><button class="btn sm dan" id="remove" ${st === "admin" || ro ? "disabled" : ""}>Удалить токен</button>`}</div></div>
+    ${S.replacing ? `<div class="ygbox mt12">${connectForm()}</div>` : ""}
+    ${banner}
+    <div class="row mt16" style="justify-content:space-between"><div><b>Филиалы для Yandex Go</b><p class="sub small">Только активные филиалы в Ташкенте. Филиал включается после проверки тарифов Яндекса.</p></div>
+      ${st === "paused" ? `<button class="btn pri sm" id="resume" ${ro ? "disabled" : ""}>Возобновить Yandex Go</button>` : (anyOn && st === "connected" ? `<button class="btn out sm" id="pause" ${ro ? "disabled" : ""}>Приостановить Yandex Go</button>` : "")}</div>
+    ${branchTable(dis || st === "paused")}
+    ${ro ? '<p class="hint mt12">Изменять настройки доставки может только владелец аккаунта.</p>' : ""}`;
+}
+function ygSection() {
+  let body;
+  if (S.mode === "none") body = `<p class="sub">Быстрая доставка по Ташкенту курьерами Яндекса. Нужен свой бизнес-кабинет Яндекс Доставки с пополненным балансом.</p>
+      <div class="row mt12"><button class="btn pri" id="connect" ${S.role === "employee" ? "disabled" : ""}>Подключить</button><a href="#" onclick="return false">Как получить токен Яндекс Доставки</a></div>`;
+  else if (S.mode === "form") body = connectForm();
+  else body = connectedBlock();
+  return `<div class="ygbox"><div class="row" style="justify-content:space-between;margin-bottom:12px"><span style="font-size:22px">${YG}</span>${statusPill()}</div>${body}</div>`;
+}
+function render() {
+  const content = `<div class="card"><div class="row" style="justify-content:space-between"><div><h3>Настройки</h3><p class="sub">Настройте профиль, интеграции доставки и платежные сервисы.</p></div>
+      <div class="row"><button class="btn out">Отменить</button><button class="btn pri">Сохранить изменения</button></div></div>
+    <div class="sec mt16"><div class="lbl">Основная информация</div><div class="grid2"><div class="field"><label>Имя</label><input class="inp" value="Абдулазиз"></div><div class="field"><label>Фамилия</label><input class="inp" value="Холдаров"></div></div></div>
+    <div class="sec"><div class="lbl">Интеграции доставки</div><div>
+      <div style="font-size:22px;margin-bottom:10px">${FARGO}</div>
+      <div class="grid2"><div class="field"><label>Логин</label><input class="inp" value="Абдулазиз"></div><div class="field"><label>Пароль</label><input class="inp" placeholder="Введите пароль"></div></div>
+      <div id="yg" class="mt8">${ygSection()}</div></div></div>
+    <div class="sec"><div class="lbl">Платежные сервисы</div><div><div style="font-size:26px;font-weight:700;color:#1d6b5a">Paylov</div><div class="field mt8"><label>Merchant ID</label><input class="inp" placeholder="Enter ID"></div></div></div></div>`;
+  $("#app").innerHTML = sellerShell("se", "<b>Настройки</b>", content) + (S.role === "employee" ? "" : "");
+  bind();
+}
+function bind() {
+  const on = (id, f) => { const el = $("#" + id); if (el) el.onclick = f; };
+  on("connect", () => { S.mode = "form"; render(); });
+  on("cancelf", () => { if (S.replacing) { S.replacing = false; } else S.mode = "none"; S.token = ""; S.err = ""; render(); });
+  const tok = $("#tok"); if (tok) tok.oninput = e => { S.token = e.target.value; S.err = ""; const b = $("#check"); b.disabled = !(S.token.trim().length >= 10 && S.c1 && S.c2 && S.hasBranch); };
+  const c1 = $("#c1"); if (c1) c1.onchange = e => { S.c1 = e.target.checked; render(); };
+  const c2 = $("#c2"); if (c2) c2.onchange = e => { S.c2 = e.target.checked; render(); };
+  on("check", () => {
+    S.checking = true; render();
+    setTimeout(() => {
+      S.checking = false; const t = S.token.toLowerCase();
+      if (t.includes("bad")) S.err = "Токен недействителен. Скопируйте его заново в кабинете Яндекс Доставки.";
+      else if (t.includes("down")) S.err = "Не удалось связаться с Яндексом. Попробуйте через несколько минут.";
+      else { if (S.replacing) { S.replacing = false; S.status = "connected"; toast("Токен заменён."); } else { S.mode = "connected"; S.status = "connected"; toast("Аккаунт Яндекс Доставки подключён. Теперь выберите филиалы для Yandex Go."); } S.token = ""; }
+      render();
+    }, 1100);
+  });
+  document.querySelectorAll(".toggle[data-b]").forEach(t => t.onclick = () => {
+    const b = S.branches[+t.dataset.b]; b.msg = "";
+    if (b.on) { b.on = false; toast(`Yandex Go выключен для филиала «${b.n}».`); render(); return; }
+    b.busy = true; render();
+    setTimeout(() => { b.busy = false; if (!b.tash) { b.on = false; b.msg = "Yandex Go недоступен по адресу этого филиала."; } else { b.on = true; toast(`Yandex Go включён для филиала «${b.n}».`); } render(); }, 900);
+  });
+  on("pause", () => { modal(`<h3>Приостановить Yandex Go?</h3><p class="sub">Покупатели не увидят Yandex Go ни в одном вашем филиале, пока вы его не возобновите. Уже оплаченные заказы с Yandex Go это не затронет.</p><div class="acts"><button class="btn out" onclick="closeModal()">Отмена</button><button class="btn pri" id="dopause">Приостановить</button></div>`);
+    $("#dopause").onclick = () => { closeModal(); S.status = "paused"; S.pausedAt = "14.10.2026, 02:10"; toast("Yandex Go приостановлен. Покупатели не увидят его, пока вы не возобновите."); render(); }; });
+  on("resume", () => { const b = $("#resume"); b.innerHTML = '<span class="spin"></span> Проверяем филиалы…'; b.disabled = true; setTimeout(() => { S.status = "connected"; toast("Yandex Go снова включён."); render(); }, 1000); });
+  on("recheck", () => { S.status = "connected"; toast("Подключение работает. Yandex Go снова доступен покупателям."); render(); });
+  on("replace", () => { S.replacing = true; S.c1 = true; S.c2 = true; render(); });
+  on("remove", () => {
+    if (S.openShip > 0) { modal(`<h3>Нельзя удалить токен сейчас</h3><p class="sub">У вас есть доставки в процессе. Удалите токен после их завершения.</p><div class="acts"><button class="btn pri" onclick="closeModal()">Понятно</button></div>`); return; }
+    modal(`<h3>Удалить токен Яндекс Доставки?</h3><p class="sub">Покупатели больше не увидят Yandex Go для ваших филиалов.</p><div class="acts"><button class="btn out" onclick="closeModal()">Отмена</button><button class="btn danfill" id="dorem">Удалить</button></div>`);
+    $("#dorem").onclick = () => { closeModal(); reset({}); toast("Токен удалён. Yandex Go выключен."); };
+  });
+}
+const conn = { mode: "connected" };
+const withOn = () => { const b = JSON.parse(JSON.stringify(BR0)); b[0].on = true; b[1].on = true; return b; };
+harness({ title: "P2.1 Seller: connect Yandex Go, branches, pause", stories: "US-YG-1.2, US-YG-1.3", version: "1.0" }, [
+  { label: "Not connected (start)", apply: () => reset(), notes: ["New “Yandex Go” block under Интеграции доставки, next to Fargo (US-YG-1.2 AC1).", "Click <b>Подключить</b> to open the connect form."], src: "Base screen: Seller website → Настройки (Figma, Seller Admin New (Website))." },
+  { label: "Connect form: try a token", apply: () => reset({ mode: "form" }), notes: ["Button stays disabled until a token (10+ chars) and both checkboxes are set (AC3).", "Type any token containing <b>bad</b> → 401 message (AC4); containing <b>down</b> → Yandex not reachable (AC5); anything else → success (AC2).", "Second checkbox = seller responsibility for weight and sizes (BR-Y22)."] },
+  { label: "Connect form: no branch with a map pin", apply: () => reset({ mode: "form", hasBranch: false }), notes: ["No active branch with a map pin → button disabled with a hint (US-YG-1.2 AC6)."] },
+  { label: "Connected: switch branches on", apply: () => reset(conn), notes: ["Branch list, all Off by default (US-YG-1.3 AC1).", "Чиланзар / Юнусабад: switch On → tariffs check → toast (AC2).", "Сергели: data missing → toggle disabled with hint (AC3).", "Самарканд: outside Tashkent → toggle returns to Off with message (AC4).", "Pause appears once a branch is On."] },
+  { label: "Connected with branches on → pause", apply: () => reset(Object.assign({ branches: withOn() }, conn)), notes: ["Click <b>Приостановить Yandex Go</b> → confirmation dialog → status “Приостановлено вами” with date (US-YG-1.3 AC7, AC11).", "Token and branch settings are kept; branch toggles are locked while paused."] },
+  { label: "Paused → resume", apply: () => reset(Object.assign({ branches: withOn(), status: "paused", pausedAt: "13.10.2026, 18:40" }, conn)), notes: ["<b>Возобновить Yandex Go</b> re-checks each On branch, then status “Подключено” (AC10).", "Already paid Yandex Go orders are processed normally during a pause (AC8)."] },
+  { label: "Token stopped working (401)", apply: () => reset(Object.assign({ branches: withOn(), status: "token" }, conn)), notes: ["Automatic switch-off for this seller only; checkout hides Yandex Go (US-YG-1.10 AC9).", "Fix with <b>Заменить токен</b>; the new token is checked before it replaces the old one (US-YG-1.2 AC7)."] },
+  { label: "Balance problem", apply: () => reset(Object.assign({ branches: withOn(), status: "balance" }, conn)), notes: ["Low-balance error from Yandex (code to confirm, OQ-Y17) → “Проблема с балансом” (US-YG-1.10 AC10).", "<b>Проверить снова</b> restores the connection when tariffs succeeds."] },
+  { label: "Switched off by Optom.uz", apply: () => reset(Object.assign({ branches: withOn(), status: "admin" }, conn)), notes: ["Admin switch overrides the seller: toggles and pause are disabled (US-YG-1.3 AC12, US-YG-1.13 AC4)."] },
+  { label: "Remove token: blocked by open deliveries", apply: () => reset(Object.assign({ branches: withOn() }, conn)), notes: ["Click <b>Удалить токен</b>: with open shipments the action is blocked (US-YG-1.2 AC8)."] },
+  { label: "Remove token: allowed", apply: () => reset(Object.assign({ branches: withOn(), openShip: 0 }, conn)), notes: ["No open shipments → confirmation → token deleted, branches off, status “Не подключено” (AC9)."] },
+  { label: "Seller employee (read-only)", apply: () => reset(Object.assign({ branches: withOn(), role: "employee" }, conn)), notes: ["Employees see the status read-only (US-YG-1.2 AC11, US-YG-1.3 AC14). Assumption until seller roles are decided (P1.6)."] },
+]);
+</script></body></html>

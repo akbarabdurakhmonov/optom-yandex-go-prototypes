@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin: Yandex Go</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>/* Optom.uz prototype base — colours and components taken from the Figma exports (Seller website, Buyer website, Super Admin Old) */
+:root{
+  --green:#00a028; --green-600:#008a22; --green-50:#e6f6ea; --green-100:#cdeed5;
+  --ink:#1b1c1f; --ink-2:#38383b; --muted:#6b7079; --muted-2:#8b9189; --line:#e7e9ec; --line-2:#d9dce1;
+  --bg:#f3f4f6; --card:#ffffff; --red:#d92d20; --red-50:#fdecec; --amber:#ca8504; --amber-50:#fef7c3;
+  --blue:#0c75ed; --blue-50:#e8f2fe; --violet:#7a5af8; --violet-50:#f1edff;
+  --radius:12px; --radius-sm:8px;
+  --font:"Onest",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--font);font-size:14px;line-height:1.45;color:var(--ink);background:var(--bg)}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--green);text-decoration:none}
+/* ---- prototype harness bar ---- */
+.pbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:8px 16px;background:#14161a;color:#e9ecef;font-size:12.5px}
+.pbar b{color:#fff;font-weight:600}
+.pbar .tag{background:#2a2e35;border-radius:6px;padding:2px 8px;color:#c6cbd2}
+.pbar select{background:#23272e;border:1px solid #3a3f47;border-radius:6px;color:#fff;padding:4px 8px;max-width:420px}
+.pbar .sp{flex:1}
+.pbar button{background:#23272e;border:1px solid #3a3f47;border-radius:6px;color:#fff;padding:4px 10px;cursor:pointer}
+.pbar button.on{background:var(--green);border-color:var(--green)}
+.notes{position:fixed;right:16px;bottom:16px;width:380px;max-height:60vh;overflow:auto;z-index:60;background:#fffef5;border:1px solid #eadf9f;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.18);padding:14px 16px;font-size:12.5px;display:none}
+.notes.show{display:block}
+.notes h4{margin:0 0 6px;font-size:13px}
+.notes ul{margin:4px 0 0 16px;padding:0}
+.notes li{margin:3px 0}
+.notes .src{color:#6b6200;font-size:11.5px;margin-top:8px}
+/* ---- seller / admin shell ---- */
+.shell{display:grid;grid-template-columns:232px 1fr;min-height:calc(100vh - 40px)}
+.side{padding:18px 14px;display:flex;flex-direction:column;gap:2px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:600;font-size:26px;letter-spacing:-.5px;margin:0 6px 22px;color:var(--ink)}
+.logo svg{flex:none}
+.side .grp{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin:14px 10px 6px}
+.nav{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;color:var(--ink-2);cursor:default}
+.nav.on{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.05);color:var(--ink);font-weight:500}
+.nav svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;opacity:.8}
+.side .me{margin-top:auto;background:#fff;border-radius:12px;padding:10px;display:flex;gap:10px;align-items:center}
+.ava{width:34px;height:34px;border-radius:50%;background:#d7dbe0;display:grid;place-items:center;font-weight:600;color:#555;flex:none}
+.me small{display:block;color:var(--green);font-size:12px}
+.main{padding:16px 24px 40px 8px;min-width:0}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.iconbtn{width:34px;height:34px;border-radius:9px;background:#fff;border:1px solid var(--line);display:grid;place-items:center}
+.crumbs{color:var(--muted);font-size:13px;display:flex;gap:8px;align-items:center}
+.crumbs b{color:var(--ink);font-weight:500}
+.top .sp{flex:1}
+.lang{background:#fff;border:1px solid var(--line);border-radius:9px;padding:6px 12px;font-size:13px}
+.h1{font-size:26px;font-weight:600;margin:6px 0 14px;display:flex;align-items:center;gap:10px}
+/* ---- components ---- */
+.card{background:var(--card);border-radius:var(--radius);padding:20px 22px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.card+.card{margin-top:12px}
+.card h3{margin:0 0 4px;font-size:18px;font-weight:600}
+.sub{color:var(--muted);margin:0}
+.row{display:flex;gap:12px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sec{display:grid;grid-template-columns:240px 1fr;gap:24px;padding:20px 0;border-top:1px solid var(--line)}
+.sec>.lbl{font-weight:600}
+.sec>.lbl .sub{font-weight:400;font-size:13px;margin-top:4px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:13px;font-weight:500}
+.inp{border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;background:#fff;outline:none;width:100%}
+.inp:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-50)}
+.inp.err{border-color:var(--red)}
+.inp[disabled]{background:#f6f7f9;color:var(--muted)}
+.err-t{color:var(--red);font-size:12.5px}
+.hint{color:var(--muted);font-size:12.5px}
+.btn{border:1px solid transparent;border-radius:10px;padding:10px 18px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.btn.pri{background:var(--green);color:#fff}
+.btn.pri:hover{background:var(--green-600)}
+.btn.pri[disabled]{background:#9fd8ad;cursor:not-allowed}
+.btn.out{background:#fff;border-color:var(--line-2);color:var(--ink)}
+.btn.soft{background:var(--green-50);color:var(--green)}
+.btn.dan{background:var(--red-50);color:var(--red)}
+.btn.danfill{background:var(--red);color:#fff}
+.btn.link{background:none;padding:6px 4px;color:var(--green)}
+.btn.sm{padding:6px 12px;font-size:13px;border-radius:8px}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:8px;padding:3px 9px;font-size:12.5px;font-weight:500;border:1px solid transparent}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.g{background:var(--green-50);color:var(--green);border-color:var(--green-100)}
+.pill.v{background:var(--violet-50);color:var(--violet);border-color:#ddd3ff}
+.pill.a{background:#fff6e0;color:#b54708;border-color:#fde7b0}
+.pill.r{background:var(--red-50);color:var(--red);border-color:#f9c9c4}
+.pill.n{background:#f1f2f4;color:var(--ink-2);border-color:var(--line)}
+.pill.b{background:var(--blue-50);color:var(--blue);border-color:#c9e0fd}
+.alert{border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;border-left:4px solid}
+.alert .ic{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex:none}
+.alert.w{background:var(--amber-50);border-color:var(--amber)} .alert.w .ic{background:var(--amber)}
+.alert.e{background:var(--red-50);border-color:var(--red)} .alert.e .ic{background:var(--red)}
+.alert.i{background:var(--blue-50);border-color:var(--blue)} .alert.i .ic{background:var(--blue)}
+.alert.s{background:var(--green-50);border-color:var(--green)} .alert.s .ic{background:var(--green)}
+.alert b{display:block;margin-bottom:2px}
+.toggle{position:relative;width:40px;height:22px;border-radius:12px;background:#d0d4da;border:none;cursor:pointer;flex:none;transition:.15s}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.toggle.on{background:var(--green)}
+.toggle.on::after{left:21px}
+.toggle[disabled]{opacity:.45;cursor:not-allowed}
+.chk{display:flex;gap:10px;align-items:flex-start;cursor:pointer;margin:8px 0}
+.chk input{width:18px;height:18px;accent-color:var(--green);margin-top:2px;flex:none}
+table.t{width:100%;border-collapse:collapse}
+table.t th{background:#f6f7f9;text-align:left;font-size:12.5px;font-weight:500;color:var(--muted);padding:10px 12px}
+table.t td{border-top:1px solid var(--line);padding:12px;vertical-align:middle}
+.kv{display:flex;gap:10px;padding:12px 0;border-top:1px solid var(--line);align-items:flex-start}
+.kv:first-of-type{border-top:none}
+.kv .k{color:var(--muted)}
+.kv svg{width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:1.6;flex:none;margin-top:1px}
+.modal-bg{position:fixed;inset:0;background:rgba(16,18,22,.45);display:grid;place-items:center;z-index:40;padding:20px}
+.modal{background:#fff;border-radius:16px;width:min(560px,100%);max-height:90vh;overflow:auto;padding:22px 24px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.modal h3{margin:0 0 6px;font-size:19px}
+.modal .acts{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1b1c1f;color:#fff;border-radius:10px;padding:10px 16px;z-index:70;box-shadow:0 10px 30px rgba(0,0,0,.25);font-size:13.5px}
+.digits{display:flex;gap:6px;align-items:flex-end}
+.digit{background:#eceef1;border-radius:10px;width:42px;height:52px;display:grid;place-items:center;font-size:24px;font-weight:600}
+.dsep{font-size:24px;font-weight:600;padding:0 4px 12px}
+.ycard{border:1.5px solid var(--line-2);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:center;cursor:pointer;background:#fff}
+.ycard.on{border-color:var(--green);background:var(--green-50)}
+.ycard .r{width:18px;height:18px;border-radius:50%;border:2px solid var(--line-2);flex:none}
+.ycard.on .r{border:5px solid var(--green)}
+.ycard[aria-disabled=true]{opacity:.5;cursor:not-allowed}
+.yglogo{font-weight:700;letter-spacing:-.3px}
+.yglogo i{font-style:italic;font-weight:800}
+.code-big{font-size:30px;letter-spacing:6px;font-weight:700;background:#f6f7f9;border-radius:10px;padding:8px 14px;display:inline-block}
+.steps{display:flex;justify-content:space-between;position:relative;margin:6px 0 4px}
+.steps::before{content:"";position:absolute;left:20px;right:20px;top:17px;height:2px;background:var(--line)}
+.step{position:relative;text-align:center;flex:1;color:var(--muted);font-size:13px}
+.step .dot{width:36px;height:36px;border-radius:10px;margin:0 auto 6px;background:#fff;border:1.5px solid var(--line-2);display:grid;place-items:center}
+.step.on{color:var(--green);font-weight:500}
+.step.on .dot{background:var(--green-50);border-color:var(--green)}
+.timeline .it{display:flex;gap:12px;padding:8px 0}
+.timeline .it .d{width:30px;height:30px;border-radius:50%;background:#f1f2f4;display:grid;place-items:center;flex:none;font-size:13px}
+.timeline .it small{display:block;color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mb0{margin-bottom:0}
+.spin{width:16px;height:16px;border:2px solid #c8ead1;border-top-color:var(--green);border-radius:50%;animation:sp 0.8s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ann{outline:2px dashed #f0b400;outline-offset:3px;border-radius:12px}
+
+:root{--blue:#0c75ed;--ab:#eef5f7}
+body{background:var(--ab)}
+.ash{display:grid;grid-template-columns:232px 1fr;min-height:calc(100vh - 44px)}
+.aside{background:#fff;padding:22px 16px}
+.aside .logo{font-size:27px;margin:0 0 28px 12px}
+.anav{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;font-weight:500;color:#1b1c1f;cursor:default;margin-bottom:4px}
+.anav svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6}
+.anav.on{background:var(--blue);color:#fff}
+.anav .ch{margin-left:auto;font-size:11px;opacity:.6}
+.asub{padding:8px 14px 8px 48px;border-radius:8px;color:#4b5563;font-size:14px;margin-bottom:2px;cursor:pointer}
+.asub.on{background:#e8f1fd;color:var(--blue);font-weight:500}
+.atop{display:flex;justify-content:flex-end;gap:12px;align-items:center;padding:16px 28px;background:#fff}
+.abox{border:1px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;gap:8px;align-items:center;background:#fff}
+.abox select{border:none;font:inherit;background:transparent;font-weight:500;outline:none}
+.apanel{background:#fff;border-radius:14px;margin:24px 28px;padding:24px 26px}
+.apanel h1{font-size:24px;margin:0 0 18px;font-weight:600;display:flex;align-items:center;gap:12px}
+.apanel h1 .btn{font-size:14px}
+.back{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#555;cursor:pointer}
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.tab{padding:10px 14px;cursor:pointer;color:var(--muted);font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.on{color:var(--ink);border-bottom-color:var(--green)}
+.tab .cnt{background:#fde8e7;color:var(--red);border-radius:10px;padding:1px 7px;font-size:12px;margin-left:6px}
+.flt{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.flt .s{display:flex;flex:1;min-width:260px;border:1px solid var(--green);border-radius:10px;overflow:hidden}
+.flt .s input{flex:1;border:none;padding:9px 12px;outline:none;font:inherit}
+.flt .s button{background:var(--green);color:#fff;border:none;padding:0 18px;font-weight:600;font:inherit}
+.gsel{background:#f2f3f5;border:none;border-radius:10px;padding:9px 12px;font:inherit;min-width:190px}
+.chip{display:inline-block;border-radius:5px;padding:2px 8px;font-size:12px;color:#fff;font-weight:500;white-space:nowrap}
+.c-blue{background:#1d5fd1}.c-or{background:#f0a020}.c-pur{background:#7a29e0}.c-cy{background:#16a3d9}.c-gr{background:#1fa83c}.c-red{background:#d92d20}.c-gray{background:#5f6368}
+.go{width:30px;height:30px;border-radius:50%;background:#e6f6ea;color:var(--green);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700}
+.gin{background:#f2f3f5;border-radius:10px;padding:10px 12px;color:#4b5563;min-height:40px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.att{border:1px solid var(--line);border-radius:12px;margin-top:12px;overflow:hidden}
+.att .hd{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fafbfc;border-bottom:1px solid var(--line)}
+.att .bd{padding:14px 16px}
+.prices{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
+.pr{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.pr small{display:block;color:var(--muted);font-size:12px}
+.pr b{font-size:17px;font-weight:600}
+.pr.hl{border-color:#f5c26b;background:#fffaf0}
+.dl{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 18px;font-size:13.5px}
+.dl div span{color:var(--muted)}
+.log{background:#0f1720;color:#d6e2ee;border-radius:10px;padding:12px;font:12px/1.5 ui-monospace,Menlo,monospace;max-height:340px;overflow:auto;white-space:pre-wrap}
+.log .m{color:#7dd3fc}.log .ok{color:#86efac}.log .bad{color:#fca5a5}
+.swrow{display:flex;align-items:flex-start;gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
+.swrow .tx{flex:1}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:12.5px}
+.ro-note{font-size:12.5px;color:var(--muted);background:#f6f7f9;border-radius:8px;padding:6px 10px;display:inline-block}
+.radio-l{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:8px;cursor:pointer}
+.radio-l.on{border-color:var(--green);background:var(--green-50)}
+textarea.inp{min-height:76px;resize:vertical}
+</style></head><body>
+<div id="app"></div>
+<script>// Prototype harness: scenario picker, notes panel, toasts, icons, seller shell
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const som = n => Math.round(n).toLocaleString("ru-RU").replace(/,/g, " ") + " сум";
+const ICON = {
+  chart: '<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  box: '<svg viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/></svg>',
+  list: '<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+  chat: '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg>',
+  users: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M16 11a3 3 0 1 0 0-6M21 20c0-2-1.5-4-4-4.6"/></svg>',
+  store: '<svg viewBox="0 0 24 24"><path d="M3 9l2-5h14l2 5M4 9v11h16V9M3 9h18M9 20v-6h6v6"/></svg>',
+  gear: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>',
+  spark: '<svg viewBox="0 0 24 24"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></svg>',
+  truck: '<svg viewBox="0 0 24 24"><path d="M2 6h12v10H2zM14 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>',
+  pin: '<svg viewBox="0 0 24 24"><path d="M12 22s7-7 7-12a7 7 0 1 0-14 0c0 5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  phone: '<svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A18 18 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg>',
+  cal: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  card: '<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>',
+  msg: '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg>',
+  user: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
+  bell: '<svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg>',
+  globe: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>',
+  side: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>',
+};
+const LOGO = '<span class="logo"><svg width="34" height="34" viewBox="0 0 34 34"><rect x="12" y="2" width="10" height="30" rx="3" fill="#00a028"/><rect x="2" y="8" width="30" height="5" rx="2.5" fill="#00a028"/><rect x="2" y="15" width="30" height="5" rx="2.5" fill="#00a028"/><rect x="2" y="22" width="30" height="5" rx="2.5" fill="#00a028"/><rect x="15" y="9" width="4" height="17" rx="1" fill="#fff"/></svg>optom</span>';
+const YG = '<span class="yglogo">Yandex <i>Go</i></span>';
+const FARGO = '<span style="font-weight:800;font-style:italic;letter-spacing:-.5px"><span style="color:#e3262e">◤</span> FARGO</span>';
+
+function sellerShell(active, crumbs, content) {
+  const nav = (k, ic, t) => `<div class="nav ${active === k ? "on" : ""}">${ICON[ic]}${t}</div>`;
+  return `<div class="shell"><aside class="side">${LOGO}
+    <div class="grp">Основное</div>${nav("an", "chart", "Аналитика")}${nav("pr", "box", "Товары")}${nav("or", "list", "Заказы")}${nav("ch", "chat", "Чаты")}
+    <div class="grp">Организация</div>${nav("em", "users", "Сотрудники")}${nav("br", "store", "Филиалы")}
+    <div class="grp">Система</div>${nav("se", "gear", "Настройки")}${nav("ta", "spark", "Тарифы")}
+    <div class="me"><span class="ava">НА</span><div><b style="font-weight:600">Николаев А. Д.</b><small>● Подтвержден</small></div></div></aside>
+    <main class="main"><div class="top"><span class="iconbtn">${ICON.side.replace("<svg", '<svg width="18" height="18" fill="none" stroke="#38383b"')}</span><div class="crumbs">${crumbs}</div><span class="sp"></span><span class="iconbtn">${ICON.bell.replace("<svg", '<svg width="18" height="18" fill="none" stroke="#38383b"')}</span><span class="lang">Русский ▾</span></div>${content}</main></div>`;
+}
+
+// ---- harness ----
+const H = { scen: [], cur: null, notesOn: false };
+function harness(meta, scenarios) {
+  H.scen = scenarios;
+  const bar = document.createElement("div"); bar.className = "pbar";
+  bar.innerHTML = `<b>${esc(meta.title)}</b><span class="tag">${esc(meta.stories)}</span><span class="tag">v${meta.version}</span>
+    <span>Scenario:</span><select id="scen">${scenarios.map((s, i) => `<option value="${i}">${i + 1}. ${esc(s.label)}</option>`).join("")}</select>
+    <button id="reset" title="Reset the current scenario">↺ Reset</button><span class="sp"></span>
+    <span style="color:#9aa1ab">Prototype · RU UI · notes in English</span>
+    <button id="ntoggle">Notes for this state</button>`;
+  document.body.prepend(bar);
+  const notes = document.createElement("div"); notes.className = "notes"; notes.id = "notes"; document.body.append(notes);
+  $("#scen").onchange = e => go(+e.target.value);
+  $("#reset").onclick = () => go(+$("#scen").value);
+  $("#ntoggle").onclick = () => { H.notesOn = !H.notesOn; notes.classList.toggle("show", H.notesOn); $("#ntoggle").classList.toggle("on", H.notesOn); };
+  const q = new URLSearchParams(location.hash.slice(1)); go(+(q.get("s") || 0));
+}
+function go(i) {
+  const s = H.scen[i]; if (!s) return; H.cur = s; $("#scen").value = i; history.replaceState(null, "", "#s=" + i);
+  s.apply(); setNotes(s.notes, s.src);
+}
+function setNotes(list, src) {
+  $("#notes").innerHTML = `<h4>What this state shows</h4><ul>${(list || []).map(n => `<li>${n}</li>`).join("")}</ul>${src ? `<div class="src">${src}</div>` : ""}`;
+}
+let toastT;
+function toast(t) { let el = $(".toast"); if (!el) { el = document.createElement("div"); el.className = "toast"; document.body.append(el); } el.textContent = t; el.style.display = "block"; clearTimeout(toastT); toastT = setTimeout(() => el.style.display = "none", 3200); }
+function modal(html) { closeModal(); const bg = document.createElement("div"); bg.className = "modal-bg"; bg.id = "mbg"; bg.innerHTML = `<div class="modal">${html}</div>`; document.body.append(bg); return bg; }
+function closeModal() { const m = $("#mbg"); if (m) m.remove(); }
+
+let S = {};
+const ROLES = { sa: "Суперадмин", sup: "Поддержка", mod: "Модератор" };
+const PROBLEMS = [
+  { o: "345934", s: "ООО «Мебель Плюс»", b: "Чиланзар", p: "Ждёт решения продавца по цене", since: "14:41 (6 мин)", st: ["Подтвержден", "c-blue"], t: "price" },
+  { o: "345911", s: "Textile Market", b: "Юнусабад", p: "Курьер не вызван", since: "13:05", st: ["Подтвержден", "c-blue"], t: "notbooked" },
+  { o: "345870", s: "ООО «Мебель Плюс»", b: "Чиланзар", p: "Не подтверждён 2 ч", since: "12:20", st: ["Новый", "c-gr"], t: "unconf" },
+  { o: "345802", s: "Uz Electronics", b: "Сергели", p: "Нет обновлений статуса 60 мин", since: "11:58", st: ["Отправлен", "c-pur"], t: "stale" },
+  { o: "345777", s: "Textile Market", b: "Юнусабад", p: "Возврат продавцу", since: "11:40", st: ["Отправлен", "c-pur"], t: "returning" },
+  { o: "345760", s: "Uz Electronics", b: "Сергели", p: "Вернуть деньги: 4 711 500 сум", since: "10:15", st: ["Возвращен", "c-gray"], t: "refund" },
+  { o: "345702", s: "Home Decor", b: "Чиланзар", p: "Платная отмена: 6 000 сум (продавец)", since: "вчера 18:22", st: ["Отменен", "c-red"], t: "paid" },
+  { o: "—", s: "Home Decor", b: "все филиалы", p: "Проблема подключения: токен недействителен (2 открытые доставки)", since: "09:02", st: ["—", "c-gray"], t: "conn" },
+];
+const PTYPES = [["", "Все проблемы"], ["price", "Ждёт решения продавца"], ["notbooked", "Курьер не вызван"], ["unconf", "Не подтверждён 2 ч"], ["stale", "Нет обновлений"], ["returning", "Возврат продавцу"], ["refund", "Вернуть деньги"], ["paid", "Платная отмена"], ["failed", "Ошибка доставки"], ["conn", "Проблема подключения"]];
+const SELLERS0 = [
+  { n: "ООО «Мебель Плюс»", st: "Подключено", c: "g", br: "2 / 3", pilot: true, chk: "сегодня 09:00 · OK", conf: "02.10.2026", open: 2, tail: "a91F", prev: "Подключено" },
+  { n: "Textile Market", st: "Приостановлено вами", c: "a", br: "1 / 1", pilot: true, chk: "сегодня 09:00 · OK", conf: "05.10.2026", open: 1, tail: "7c2D", prev: "Приостановлено вами" },
+  { n: "Uz Electronics", st: "Подключено", c: "g", br: "1 / 2", pilot: true, chk: "сегодня 09:00 · OK", conf: "06.10.2026", open: 3, tail: "e04B", prev: "Подключено" },
+  { n: "Home Decor", st: "Токен недействителен", c: "r", br: "0 / 1", pilot: true, chk: "сегодня 09:02 · 401", conf: "08.10.2026", open: 2, tail: "55aa", prev: "Токен недействителен" },
+  { n: "Kids World", st: "Проблема с балансом", c: "r", br: "1 / 1", pilot: false, chk: "сегодня 09:00 · баланс", conf: "10.10.2026", open: 0, tail: "b1c9", prev: "Проблема с балансом" },
+];
+function reset(o) {
+  closeModal(); ORD = JSON.parse(JSON.stringify(ORD0));
+  S = Object.assign({ view: "problems", role: "sa", ptype: "", q: "", platform: true, pilot: true, sellers: JSON.parse(JSON.stringify(SELLERS0)), stFilter: "", sel: 0, history: false, logOld: false, order: "delivered", refundDone: false, noProblems: false, noSellers: false, cancelled: false }, o || {});
+  render();
+}
+const can = { platform: () => S.role === "sa", seller: () => S.role !== "mod", ship: () => S.role !== "mod" };
+const AICON = {
+  an: ICON.chart, pr: ICON.box, or: ICON.list, us: ICON.users,
+  mo: '<svg viewBox="0 0 24 24"><path d="M3 8l4 4 5-7 5 7 4-4-2 11H5z"/></svg>',
+  ca: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg>',
+  ba: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/></svg>',
+  de: ICON.truck, ex: '<svg viewBox="0 0 24 24"><path d="M10 4H5v16h5M15 8l4 4-4 4M19 12H9"/></svg>',
+};
+function adminShell(section, sub, content) {
+  const nav = (k, t, ch) => `<div class="anav ${section === k ? "on" : ""}">${AICON[k]}${t}${ch ? '<span class="ch">' + ch + "</span>" : ""}</div>`;
+  const subs = section === "de" ? [["problems", "Проблемы Yandex Go"], ["conns", "Подключения продавцов"], ["settings", "Настройки Yandex Go"]].map(s => `<div class="asub ${sub === s[0] ? "on" : ""}" data-v="${s[0]}">${s[1]}</div>`).join("") : "";
+  return `<div class="ash"><aside class="aside"><span class="logo" style="display:flex;align-items:center;gap:8px">${LOGO.replace("optom</span>", "optom.uz</span>")}</span>
+    ${nav("an", "Аналитика", "▾")}${nav("pr", "Товары")}${nav("or", "Заказы")}${nav("us", "Пользователи", "▾")}${nav("mo", "Модерация", "▾")}${nav("ca", "Категории")}${nav("ba", "Баннеры")}
+    ${nav("de", "Доставка <span class='pill b' style='margin-left:4px;font-size:10px;padding:1px 6px'>новое</span>", "▴")}${subs}
+    <div style="border-top:1px solid var(--line);margin:18px 0 10px"></div>${nav("ex", "Выйти")}</aside>
+    <div><div class="atop"><span class="abox">${ICON.bell.replace("<svg", '<svg width="18" height="18" fill="none" stroke="#38383b" stroke-width="1.6"')}</span><span class="abox">RU ▾</span>
+      <span class="abox"><span class="ava" style="width:28px;height:28px;font-size:11px">АХ</span><div style="line-height:1.15"><b style="font-size:13px">Абдулазиз Холдаров</b><br><select id="role" title="Prototype: switch admin role">${Object.entries(ROLES).map(([k, v]) => `<option value="${k}" ${S.role === k ? "selected" : ""}>${v}</option>`).join("")}</select></div></span></div>
+    ${content}</div></div>`;
+}
+// ---------- problem list ----------
+function problems() {
+  let rows = S.noProblems ? [] : PROBLEMS.filter(r => (!S.ptype || r.t === S.ptype) && (!S.q || r.s.toLowerCase().includes(S.q.toLowerCase()) || r.o.includes(S.q)));
+  const body = rows.length ? `<table class="t"><thead><tr><th>Заказ</th><th>Продавец</th><th>Филиал</th><th>Проблема</th><th>С какого времени</th><th>Статус заказа</th><th></th></tr></thead><tbody>
+    ${rows.map(r => `<tr><td><b>${r.o === "—" ? "—" : "№" + r.o}</b></td><td>${r.s}</td><td class="muted">${r.b}</td><td>${r.p}</td><td class="muted">${r.since}</td><td>${r.st[0] === "—" ? "—" : `<span class="chip ${r.st[1]}">${r.st[0]}</span>`}</td><td><span class="go" data-o="${r.t}" title="Открыть">→</span></td></tr>`).join("")}</tbody></table>`
+    : `<div style="text-align:center;padding:50px 0" class="muted">${S.noProblems ? "Сейчас нет проблем с Yandex Go." : "Ничего не найдено по этим фильтрам."}</div>`;
+  return adminShell("de", "problems", `<div class="apanel"><h1>Проблемы Yandex Go <span class="small muted" style="font-weight:400">обновляется каждую минуту · 14:47</span></h1>
+    <div class="flt"><div class="s"><input id="q" placeholder="Поиск по номеру заказа или продавцу…" value="${esc(S.q)}"><button id="qgo">Найти</button></div>
+      <select class="gsel" id="ptype">${PTYPES.map(t => `<option value="${t[0]}" ${S.ptype === t[0] ? "selected" : ""}>${t[1]}</option>`).join("")}</select>
+      ${S.ptype || S.q ? '<button class="btn link" id="clr">Сбросить фильтры</button>' : ""}</div>${body}</div>`);
+}
+// ---------- order card ----------
+const ORD0 = {
+  delivered: { no: "345934", status: ["Успешно завершен", "c-gr"], atts: [
+    { n: 2, claim: "c8f1…2a7e", st: ["Доставлено", "g"], raw: "delivered_finish", tariff: "courier · машина не требуется", load: 0, d2d: "до двери (skip_door_to_door = false)", parcel: "M · 40×30×20 см · 4,25 кг", courier: "Дилшод Т. · Chevrolet Cobalt · 01 A 777 BA", E: 20900, O: 22600, F: 22600, diff: 1200, fee: 0, ret: 0, ded: 0, by: "Николаев А. Д. (продавец) · 14.10 14:52", codes: ["Код получения: подтверждён 15:01", "Код вручения: подтверждён 15:31"] },
+    { n: 1, claim: "77b0…91cd", st: ["Отменено", "n"], raw: "cancelled", tariff: "courier", load: 0, d2d: "до двери", parcel: "M · 40×30×20 см · 4,25 кг", courier: "—", E: 20900, O: 23100, F: null, diff: null, fee: 0, ret: 0, ded: 0, by: "Николаев А. Д. (продавец) · 14.10 14:33", note: "Продавец нажал «Не сейчас» на предложение 23 100 сум (бесплатная отмена)." }] },
+  returned: { no: "345760", status: ["Возвращен", "c-gray"], atts: [
+    { n: 1, claim: "a2d4…0f11", st: ["Возвращено", "n"], raw: "returned_finish", tariff: "express", load: 0, d2d: "у подъезда (skip_door_to_door = true)", parcel: "L · 50×40×30 см · 9,1 кг", courier: "Бахтиёр К. · Nexia 3 · 01 B 345 CA", E: 21000, O: 21400, F: 30400, diff: 0, fee: 0, ret: 9000, ded: 9000, by: "Сапаров Р. (продавец) · 14.10 08:40", codes: ["Код получения: подтверждён 08:58", "Код вручения: не подтверждён", "Код возврата: подтверждён 10:15"] }] },
+  open: { no: "345802", status: ["Отправлен", "c-pur"], atts: [
+    { n: 1, claim: "f3e9…7b20", st: ["Курьер у продавца", "b"], raw: "pickup_arrived", tariff: "courier", load: 0, d2d: "до двери", parcel: "S · 30×20×10 см · 1,2 кг", courier: "Улугбек Р. · Spark · 01 C 909 DA", E: 18700, O: 18700, F: null, diff: 0, fee: null, ret: 0, ded: 0, by: "Каримова Н. (продавец) · 14.10 11:40", codes: ["Код получения: не подтверждён"] }] },
+};
+let ORD = JSON.parse(JSON.stringify(ORD0));
+const P = { delivered: 21400, returned: 21400, open: 18700 };
+function priceBox(a, pBuyer) {
+  const f = v => v == null ? "—" : som(v);
+  return `<div class="prices"><div class="pr"><small>E · оценка при оформлении</small><b>${f(a.E)}</b></div><div class="pr"><small>P · оплатил покупатель</small><b>${f(pBuyer)}</b></div><div class="pr ${a.O > pBuyer ? "hl" : ""}"><small>O · предложение Яндекса</small><b>${f(a.O)}</b></div><div class="pr ${a.F && a.F > a.O ? "hl" : ""}"><small>F · итоговая цена</small><b>${f(a.F)}</b></div></div>
+  <div class="dl"><div><span>Разница (O − P), списано с продавца:</span> ${a.diff == null ? "—" : som(a.diff)}</div><div><span>Плата за отмену:</span> ${a.fee == null ? "—" : som(a.fee)}</div><div><span>Плата за возврат R = max(0, F − O):</span> ${som(a.ret)}</div><div><span>Удержано из возврата покупателю:</span> ${som(a.ded)}</div></div>`;
+}
+function attempt(a, latest, pBuyer) {
+  const ev = [["14:33", "продавец", "Создана заявка", "— → Оценка", ""], ["14:33", "журнал", "Предложение получено", "Оценка → Ждёт продавца", som(a.O)], ["14:41", "продавец", "Принял цену", "Ждёт продавца → Поиск курьера", ""], ["14:44", "журнал", "Курьер найден", "Поиск → Назначен", ""], ["14:52", "журнал", "Курьер у продавца", "Назначен → У продавца", ""], ["15:01", "журнал", "Посылка передана", "У продавца → В пути", ""], ["15:31", "журнал", "Доставлено", "В пути → Доставлено", som(a.F || 0)], ["15:31", "система", "Заказ завершён автоматически", "Отправлен → Успешно завершен", ""]];
+  if (a.raw === "cancelled") ev.splice(2, ev.length, ["14:34", "продавец", "«Не сейчас»: заявка отменена бесплатно", "Ждёт продавца → Отменено", ""]);
+  const canCancel = can.ship() && latest && ["b"].includes(a.st[1]);
+  return `<div class="att"><div class="hd"><b>Попытка ${a.n}</b>${latest ? '<span class="pill b">последняя</span>' : ""}<span class="pill ${a.st[1]}">${a.st[0]}</span><span class="mono muted">${a.raw}</span><span class="sp" style="flex:1"></span><span class="mono muted">claim ${a.claim}</span></div>
+  <div class="bd">${a.note ? `<p class="small muted" style="margin:0 0 8px">${a.note}</p>` : ""}
+    <div class="dl"><div><span>Тариф:</span> ${a.tariff}</div><div><span>Грузчики:</span> ${a.load}</div><div><span>Адрес:</span> ${a.d2d}</div><div><span>Посылка:</span> ${a.parcel}</div><div><span>Курьер:</span> ${a.courier}</div><div><span>Отслеживание:</span> ${a.courier === "—" ? "—" : '<a href="#" onclick="toast(\'Ссылка Яндекса откроется в новой вкладке.\');return false">ссылка ↗</a>'}</div><div><span>Создал:</span> ${a.by}</div></div>
+    ${priceBox(a, pBuyer)}
+    ${a.codes ? `<div class="small mt8">${a.codes.map(c => `<span class="pill ${c.includes("не") ? "n" : "g"}" style="margin-right:6px">${c}</span>`).join("")}</div>` : ""}
+    <div class="row mt12"><button class="btn sm out" data-h="${a.n}">${S.history === a.n ? "Скрыть историю" : "История"}</button><button class="btn sm out" data-log="${a.n}">Показать лог API</button>${canCancel && !S.cancelled ? '<button class="btn sm dan" id="acancel">Отменить курьера</button>' : ""}</div>
+    ${S.history === a.n ? `<table class="t mt12"><thead><tr><th>Время</th><th>Источник</th><th>Событие</th><th>Статус</th><th>Цена</th></tr></thead><tbody>${ev.map(e => `<tr><td class="muted">${e[0]}</td><td>${e[1]}</td><td>${e[2]}</td><td class="small">${e[3]}</td><td>${e[4]}</td></tr>`).join("")}</tbody></table>` : ""}
+  </div></div>`;
+}
+function orderCard() {
+  const d = ORD[S.order], pB = P[S.order];
+  let banner = "";
+  if (S.order === "returned") banner = S.refundDone ? `<div class="alert s mt12"><span class="ic">✓</span><div><b>Возврат выполнен</b>4 711 500 сум · отметил ${ROLES[S.role]} Абдулазиз Холдаров, 14.10.2026 14:55. Заказ: Refunded.</div></div>`
+    : `<div class="alert w mt12"><span class="ic">!</span><div><b>Вернуть деньги покупателю: 4 711 500 сум</b>Товары 4 720 500 сум − плата Яндекса за возврат 9 000 сум. Доставка (21 400 сум) не возвращается. Сделайте возврат через обычную функцию возврата, затем отметьте здесь.${can.ship() ? '<div class="row mt8"><button class="btn sm out">Открыть возврат</button><button class="btn sm pri" id="refdone">Возврат выполнен</button></div>' : ""}</div></div>`;
+  if (S.cancelled) banner = `<div class="alert i mt12"><span class="ic">i</span><div><b>Курьер отменён поддержкой</b>${S.cancelled}</div></div>`;
+  return adminShell("or", "", `<div class="apanel"><h1><span class="back" id="back">←</span>Заказ #${d.no}<span class="sp" style="flex:1"></span><span class="chip ${d.status[1]}" style="font-size:13px;padding:5px 10px">${d.status[0]}</span></h1>
+    <h3 style="margin:0 0 10px">Информация о клиенте</h3><div class="g3"><div><label class="small muted">Имя</label><div class="gin">Азизбек Хамидов</div></div><div><label class="small muted">Телефон</label><div class="gin">+998 90 222 02 20</div></div><div><label class="small muted">Продавец / филиал</label><div class="gin">ООО «Мебель Плюс» · Чиланзар</div></div></div>
+    <h3 style="margin:22px 0 10px">Доставка</h3><div class="g3"><div><label class="small muted">Адрес</label><div class="gin">Ташкент, массив Буз-1, 8 · подъезд 2, кв. 45</div></div><div><label class="small muted">Способ доставки</label><div class="gin">Yandex Go · Курьер</div></div><div><label class="small muted">Комментарий клиента</label><div class="gin">Возле Korzinka</div></div></div>
+    <div class="card" style="margin-top:22px;border:2px solid #ffd84d;box-shadow:none"><div class="row" style="justify-content:space-between"><h3 style="margin:0">${YG} &nbsp;Доставка</h3><span class="small muted">${d.atts.length} ${d.atts.length > 1 ? "попытки" : "попытка"} · новые сверху</span></div>
+      ${banner}${d.atts.map((a, i) => attempt(a, i === 0, pB)).join("")}</div>
+    <h3 style="margin:22px 0 10px">Оплата</h3><div class="g3"><div><label class="small muted">Статус</label><div class="gin">${S.refundDone ? "Возвращено" : "Оплачено"}</div></div><div><label class="small muted">Сумма</label><div class="gin">${som(4720500 + pB)}</div></div><div><label class="small muted">Способ</label><div class="gin">Humo</div></div></div></div>`);
+}
+function apiLog() {
+  if (S.logOld) return `<h3>Лог API</h3><p class="sub">Лог API больше недоступен (хранится 90 дней).</p><div class="acts"><button class="btn out" onclick="closeModal()">Закрыть</button></div>`;
+  return `<h3>Лог API · claim c8f1…2a7e</h3><div class="log"><span class="m">POST</span> /b2b/cargo/integration/v2/claims/create?request_id=6f2…  <span class="ok">200</span> · 412 ms · 14:41:03
+Authorization: Bearer ••••a91F
+{"items":[{"quantity":1,"weight":4.25,"size":{"length":0.4,"width":0.3,"height":0.2}}],"client_requirements":{"taxi_class":"courier"},"skip_door_to_door":false, …}
+
+<span class="m">POST</span> /b2b/cargo/integration/v2/claims/info?claim_id=c8f1…  <span class="ok">200</span> · 120 ms · 14:41:09
+{"status":"ready_for_approval","pricing":{"offer":{"price":"22600.0000","valid_until":"2026-10-14T14:51:09+05:00"}}, …}
+
+<span class="m">POST</span> /b2b/cargo/integration/v2/claims/accept  <span class="ok">200</span> · 98 ms · 14:41:30
+
+<span class="m">POST</span> /b2b/cargo/integration/v2/claims/journal  <span class="ok">200</span> · 77 ms · 15:31:12
+{"events":[{"claim_id":"c8f1…","new_status":"delivered_finish","updated_ts":"2026-10-14T15:31:05+05:00"}]}
+
+<span class="m">POST</span> /b2b/cargo/integration/v2/claims/journal  <span class="bad">503</span> · 3001 ms · 15:32:12 · retried</div>
+  <p class="hint">Токен никогда не показывается: только •••• и 4 последних символа. Хранится 90 дней.</p><div class="acts"><button class="btn out" onclick="closeModal()">Закрыть</button></div>`;
+}
+// ---------- connections ----------
+const ST_LIST = ["Не подключено", "Подключено", "Приостановлено вами", "Токен недействителен", "Проблема с балансом", "Отключено Optom.uz"];
+function conns() {
+  const rows = S.noSellers ? [] : S.sellers.filter(s => (!S.stFilter || s.st === S.stFilter) && (!S.q || s.n.toLowerCase().includes(S.q.toLowerCase())));
+  const body = rows.length ? `<table class="t"><thead><tr><th>Продавец</th><th>Статус</th><th>Филиалы вкл. / всего</th><th>Пилот</th><th>Последняя проверка токена</th><th>Подтверждения</th><th>Открытые доставки</th><th></th></tr></thead><tbody>
+    ${rows.map(s => `<tr><td><b>${s.n}</b></td><td><span class="pill ${s.c}">${s.st}</span></td><td>${s.br}</td><td>${S.pilot ? (s.pilot ? "да" : "нет") : "—"}</td><td class="small">${s.chk}</td><td class="small muted">${s.conf}</td><td>${s.open}</td><td><span class="go" data-s="${S.sellers.indexOf(s)}">→</span></td></tr>`).join("")}</tbody></table>`
+    : `<div style="text-align:center;padding:50px 0" class="muted">${S.noSellers ? "Пока ни один продавец не подключил Yandex Go." : "Ничего не найдено."}</div>`;
+  return adminShell("de", "conns", `<div class="apanel"><h1>Подключения продавцов</h1><div class="flt"><div class="s"><input id="q" placeholder="Поиск по продавцу…" value="${esc(S.q)}"><button id="qgo">Найти</button></div>
+    <select class="gsel" id="stf"><option value="">Все статусы</option>${ST_LIST.map(t => `<option ${S.stFilter === t ? "selected" : ""}>${t}</option>`).join("")}</select></div>${body}</div>`);
+}
+function sellerCard() {
+  const s = S.sellers[S.sel], off = s.st === "Отключено Optom.uz";
+  const hist = (s.hist || []).concat([["14.10 09:02", "система", "Проверка токена: OK"], ["08.10 16:20", "Сапаров Р.", "Филиал Чиланзар включён"], ["02.10 11:05", "Сапаров Р.", "Подключено, подтверждения приняты"]]);
+  return adminShell("de", "conns", `<div class="apanel"><h1><span class="back" id="backc">←</span>${s.n}<span class="pill ${s.c}">${s.st}</span><span class="sp" style="flex:1"></span>
+    ${can.seller() ? (off ? '<button class="btn pri" id="son">Включить снова</button>' : '<button class="btn soft" id="soff" style="color:var(--red);background:#fdecea">Отключить Yandex Go для продавца</button>') : '<span class="ro-note">Только просмотр</span>'}</h1>
+    <div class="g3"><div><label class="small muted">Токен</label><div class="gin mono">••••${s.tail}</div></div><div><label class="small muted">Филиалы вкл. / всего</label><div class="gin">${s.br}</div></div><div><label class="small muted">Открытые доставки</label><div class="gin">${s.open} · продолжаются как обычно</div></div></div>
+    ${S.pilot ? `<label class="chk mt16"><input type="checkbox" id="pil" ${s.pilot ? "checked" : ""} ${can.platform() ? "" : "disabled"}><span>Разрешён в пилоте</span></label>` : ""}
+    ${off ? `<div class="alert e mt16"><span class="ic">!</span><div><b>Отключено Optom.uz</b>Причина: ${esc(s.reason || "")}. Продавец видит «Отключено Optom.uz. Обратитесь в поддержку.» и не может включить сам.</div></div>` : ""}
+    <h3 style="margin:22px 0 8px">История подключения</h3><table class="t"><thead><tr><th>Когда</th><th>Кто</th><th>Что</th></tr></thead><tbody>${hist.map(h => `<tr><td class="muted">${h[0]}</td><td>${h[1]}</td><td>${h[2]}</td></tr>`).join("")}</tbody></table></div>`);
+}
+// ---------- settings ----------
+function settings() {
+  const ro = !can.platform();
+  return adminShell("de", "settings", `<div class="apanel"><h1>Настройки Yandex Go</h1>${ro ? '<span class="ro-note">Меняет только суперадмин. Для вас — только просмотр.</span>' : ""}
+    <div class="swrow"><div class="tx"><b>Yandex Go на платформе</b><div class="sub">Выключено — покупатели не видят Yandex Go при оформлении. Уже оплаченные заказы с Yandex Go продолжаются: продавцы могут подтверждать, отменять и вызывать доставку заново.</div></div><button class="toggle ${S.platform ? "on" : ""}" id="plat" ${ro ? "disabled" : ""} aria-label="Yandex Go на платформе"></button></div>
+    <div class="swrow"><div class="tx"><b>Режим пилота: только разрешённые продавцы</b><div class="sub">Yandex Go доступен только продавцам с отметкой «Разрешён в пилоте». Остальные видят «Yandex Go пока недоступен для вашего магазина» и не могут подключиться.</div></div><button class="toggle ${S.pilot ? "on" : ""}" id="pilot" ${ro || !S.platform ? "disabled" : ""} aria-label="Режим пилота"></button></div>
+    ${S.pilot ? `<div class="mt12"><b class="small">Разрешены в пилоте:</b> ${S.sellers.filter(s => s.pilot).map(s => `<span class="pill g" style="margin:3px">${s.n}</span>`).join("")}<span class="small muted"> · меняется в карточке продавца</span></div>` : ""}
+    <h3 style="margin:24px 0 8px">История изменений</h3><table class="t"><thead><tr><th>Когда</th><th>Кто</th><th>Настройка</th><th>Было → стало</th></tr></thead><tbody>${(S.audit || []).concat([["01.10 10:00", "Абдулазиз Холдаров", "Режим пилота", "Выкл → Вкл"], ["01.10 09:58", "Абдулазиз Холдаров", "Yandex Go на платформе", "Выкл → Вкл"]]).map(h => `<tr><td class="muted">${h[0]}</td><td>${h[1]}</td><td>${h[2]}</td><td>${h[3]}</td></tr>`).join("")}</tbody></table></div>`);
+}
+// ---------- render & bind ----------
+function render() {
+  const v = { problems, order: orderCard, conns, seller: sellerCard, settings }[S.view];
+  $("#app").innerHTML = v(); bind();
+}
+function bind() {
+  $("#role").onchange = e => { S.role = e.target.value; render(); };
+  document.querySelectorAll(".asub[data-v]").forEach(a => a.onclick = () => { S.view = a.dataset.v; S.q = ""; render(); });
+  const q = $("#q"); if (q) { const f = () => { S.q = q.value; render(); }; $("#qgo").onclick = f; q.onkeydown = e => { if (e.key === "Enter") f(); }; }
+  const pt = $("#ptype"); if (pt) pt.onchange = e => { S.ptype = e.target.value; render(); };
+  const clr = $("#clr"); if (clr) clr.onclick = () => { S.ptype = ""; S.q = ""; render(); };
+  document.querySelectorAll(".go[data-o]").forEach(g => g.onclick = () => { const t = g.dataset.o; if (t === "conn") { S.view = "seller"; S.sel = 3; } else { S.view = "order"; S.order = t === "refund" ? "returned" : t === "stale" ? "open" : "delivered"; } render(); });
+  const st = $("#stf"); if (st) st.onchange = e => { S.stFilter = e.target.value; render(); };
+  document.querySelectorAll(".go[data-s]").forEach(g => g.onclick = () => { S.view = "seller"; S.sel = +g.dataset.s; render(); });
+  const bk = $("#back"); if (bk) bk.onclick = () => { S.view = "problems"; render(); };
+  const bc = $("#backc"); if (bc) bc.onclick = () => { S.view = "conns"; render(); };
+  document.querySelectorAll("[data-h]").forEach(b => b.onclick = () => { S.history = S.history === +b.dataset.h ? false : +b.dataset.h; render(); });
+  document.querySelectorAll("[data-log]").forEach(b => b.onclick = () => { const m = modal(apiLog()); m.querySelector(".modal").style.width = "760px"; });
+  const rd = $("#refdone"); if (rd) rd.onclick = () => modal(`<h3>Отметить возврат выполненным?</h3><p class="sub">Подтвердите, что 4 711 500 сум уже возвращены покупателю через функцию возврата. Заказ станет Refunded и уйдёт из списка проблем.</p><div class="acts"><button class="btn out" onclick="closeModal()">Отмена</button><button class="btn pri" id="rdok">Возврат выполнен</button></div>`) && ($("#rdok").onclick = () => { closeModal(); S.refundDone = true; render(); toast("Возврат отмечен. Сохранены пользователь и время."); });
+  const ac = $("#acancel"); if (ac) ac.onclick = cancelDialog;
+  const so = $("#soff"); if (so) so.onclick = switchOffDialog;
+  const sn = $("#son"); if (sn) sn.onclick = () => { const s = S.sellers[S.sel]; sn.disabled = true; sn.innerHTML = '<span class="spin"></span> Проверяем токен…'; setTimeout(() => { if (S.onFail) { s.st = "Токен недействителен"; s.c = "r"; toast("Яндекс отклонил токен (401). Статус: Токен недействителен."); } else { s.st = s.prev; s.c = s.prev === "Приостановлено вами" ? "a" : "g"; toast("Yandex Go снова включён для продавца."); } s.hist = [["14.10 14:58", "Абдулазиз Холдаров", "Включено снова · проверка токена " + (S.onFail ? "401" : "OK")]].concat(s.hist || []); render(); }, 900); };
+  const pil = $("#pil"); if (pil) pil.onchange = e => { S.sellers[S.sel].pilot = e.target.checked; toast(e.target.checked ? "Продавец разрешён в пилоте" : "Продавец убран из пилота"); };
+  const pl = $("#plat"); if (pl) pl.onclick = () => {
+    if (!S.platform) { S.platform = true; S.audit = [["14.10 14:59", "Абдулазиз Холдаров", "Yandex Go на платформе", "Выкл → Вкл"]].concat(S.audit || []); render(); toast("Yandex Go включён на платформе"); return; }
+    modal(`<h3>Выключить Yandex Go для всех продавцов?</h3><p class="sub">Покупатели не увидят Yandex Go, пока вы не включите его снова. Уже оплаченные заказы с Yandex Go не затрагиваются.</p><div class="acts"><button class="btn out" onclick="closeModal()">Отмена</button><button class="btn danfill" id="poff">Выключить</button></div>`);
+    $("#poff").onclick = () => { closeModal(); S.platform = false; S.audit = [["14.10 14:59", "Абдулазиз Холдаров", "Yandex Go на платформе", "Вкл → Выкл"]].concat(S.audit || []); render(); };
+  };
+  const pi = $("#pilot"); if (pi) pi.onclick = () => { S.pilot = !S.pilot; S.audit = [["14.10 15:00", "Абдулазиз Холдаров", "Режим пилота", S.pilot ? "Выкл → Вкл" : "Вкл → Выкл"]].concat(S.audit || []); render(); };
+}
+function cancelDialog() {
+  let who = "";
+  const m = modal(`<h3>Отменить курьера по просьбе клиента?</h3><p class="sub">Яндекс сейчас берёт за отмену: <b>6 000 сум</b> (cancel-info, курьер уже у продавца). Курьер ещё не забрал посылку.</p>
+    <b class="small">Кто стал причиной отмены? Он оплачивает плату</b>
+    <div class="radio-l" data-w="buyer"><span class="radio"></span><div><b>Покупатель</b><div class="small muted">Плата удерживается из возврата покупателю.</div></div></div>
+    <div class="radio-l" data-w="seller"><span class="radio"></span><div><b>Продавец</b><div class="small muted">Плата остаётся на балансе Яндекса продавца.</div></div></div>
+    <div class="field mt12"><label>Комментарий (необязательно)</label><input class="inp" id="cc" maxlength="300"></div><p class="err-t" id="werr" style="display:none">Выберите, кто стал причиной отмены.</p>
+    <div class="acts"><button class="btn out" onclick="closeModal()">Не отменять</button><button class="btn danfill" id="cok">Отменить курьера · 6 000 сум</button></div>`);
+  m.querySelectorAll(".radio-l").forEach(r => r.onclick = () => { who = r.dataset.w; m.querySelectorAll(".radio-l").forEach(x => { x.classList.toggle("on", x === r); x.querySelector(".radio").classList.toggle("on", x === r); }); $("#werr").style.display = "none"; });
+  $("#cok").onclick = () => { if (!who) { $("#werr").style.display = "block"; return; } closeModal(); S.cancelled = `Плата 6 000 сум · платит ${who === "buyer" ? "покупатель" : "продавец"} · ${ROLES[S.role]} Абдулазиз Холдаров, 14:58. Продавец может вызвать доставку заново.`; ORD.open.atts[0].st = ["Отменено", "n"]; ORD.open.atts[0].fee = 6000; render(); };
+}
+function switchOffDialog() {
+  const s = S.sellers[S.sel];
+  modal(`<h3>Отключить Yandex Go для «${s.n}»?</h3><p class="sub">Yandex Go пропадёт во всех филиалах продавца. Открытые доставки (${s.open}) продолжатся как обычно. Продавец не сможет включить сам.</p>
+    <div class="field"><label>Причина *</label><textarea class="inp" id="rsn" maxlength="300" placeholder="Например: повторные отмены после вызова курьера"></textarea><span class="err-t" id="rerr" style="display:none">Укажите причину (не менее 5 символов).</span></div>
+    <div class="acts"><button class="btn out" onclick="closeModal()">Отмена</button><button class="btn danfill" id="sok">Отключить</button></div>`);
+  $("#sok").onclick = () => { const r = $("#rsn").value.trim(); if (r.length < 5) { $("#rsn").classList.add("err"); $("#rerr").style.display = "block"; return; } closeModal(); s.prev = s.st; s.st = "Отключено Optom.uz"; s.c = "r"; s.reason = r; s.hist = [["14.10 14:57", "Абдулазиз Холдаров", "Отключено Optom.uz · причина: " + esc(r)]].concat(s.hist || []); render(); };
+}
+const FIELDS = `<table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:6px"><tr><th align="left">Field</th><th align="left">Source</th></tr>
+<tr><td>E</td><td>Estimate shown at checkout (check-price)</td></tr><tr><td>P</td><td>Delivery fee the buyer paid (= E at payment)</td></tr><tr><td>O</td><td>claims/info pricing.offer.price</td></tr><tr><td>F</td><td>final_price at delivered/returned_finish</td></tr><tr><td>PriceDiffUzs</td><td>max(0, O − P), charged to the seller (D11)</td></tr><tr><td>CancelFeeUzs</td><td>cancel-info, payer = who caused (D5)</td></tr><tr><td>Return fee R</td><td>max(0, F − O) (BR-Y9, OQ-Y30)</td></tr></table>`;
+harness({ title: "P2.4 Admin: Yandex Go shipments, problems, switches", stories: "US-YG-1.12, 1.13", version: "1.0" }, [
+  { label: "Problem list (super admin)", apply: () => reset(), notes: ["New menu “Доставка” with three sub-pages (assumption: placed in the existing admin sidebar).", "Every problem type from US-YG-1.12 Detailed requirements, newest first; refresh every minute (AC5, AC6).", "Filter by problem type, search by order or seller (AC7). The arrow opens the order card or the seller connection."], src: "Base screen: Admin panel → Заказы list (Figma, old admin design)." },
+  { label: "Problem list: filtered / empty", apply: () => reset({ ptype: "failed" }), notes: ["Nothing matches the filter → empty text + “Сбросить фильтры” (AC7).", "When there are no problems at all the text is “Сейчас нет проблем с Yandex Go.” (pick scenario 3)."] },
+  { label: "Problem list: no problems at all", apply: () => reset({ noProblems: true }), notes: ["AC7 empty state."] },
+  { label: "Order card: Yandex Go block, two attempts", apply: () => reset({ view: "order", order: "delivered" }), notes: ["Shipment block on the admin order card, latest attempt first (AC1).", "Three prices E / P / O / F plus the price difference charged to the seller, cancel fee, return fee and refund deduction.", "Code confirmations for disputes (AC4).", "Field sources:" + FIELDS], src: "Base screen: Admin panel → Заказ #000001 (Figma, old admin design)." },
+  { label: "Order card: history + API log", apply: () => { reset({ view: "order", order: "delivered", history: 2 }); }, notes: ["“История” lists ShipmentEvents: time, source, event, old → new status, price (AC2).", "Press “Показать лог API”: raw requests/responses with method, HTTP code, duration; token masked (AC3)."] },
+  { label: "Order card: API log older than 90 days", apply: () => reset({ view: "order", order: "delivered", logOld: true }), notes: ["Press “Показать лог API” → “Лог API больше недоступен (хранится 90 дней).” (AC3)."] },
+  { label: "Order card: parcel returned → Refund made", apply: () => reset({ view: "order", order: "returned" }), notes: ["Refund amount = goods − R, R = max(0, F − O) = 30 400 − 21 400 = 9 000 сум; delivery fee kept (US-YG-1.10 AC8). Example numbers.", "Support makes the refund with the existing function, then <b>Возврат выполнен</b> → Refunded, user and time stored (AC8)."] },
+  { label: "Order card: support cancels a courier", apply: () => reset({ view: "order", order: "open", role: "sup" }), notes: ["<b>Отменить курьера</b>: fee from cancel-info; support must choose who caused it — that party pays (AC9, US-YG-1.9, D5).", "Without a choice → “Выберите, кто стал причиной отмены.”"] },
+  { label: "Order card: moderator (read-only)", apply: () => reset({ view: "order", order: "returned", role: "mod" }), notes: ["Moderator sees everything but no “Возврат выполнен” / “Отменить курьера” (AC10). Direct API → 403.", "Use the role selector in the top-right corner to compare roles."] },
+  { label: "Settings: platform switch and pilot", apply: () => reset({ view: "settings" }), notes: ["Platform switch (Off by default after release, AC1–AC2). Turning off asks for confirmation; paid orders are not affected.", "Pilot mode: only allowed sellers (AC3, assumption to confirm)."] },
+  { label: "Settings: support sees read-only", apply: () => reset({ view: "settings", role: "sup" }), notes: ["Only super admin changes platform and pilot switches (AC9)."] },
+  { label: "Connections list", apply: () => reset({ view: "conns" }), notes: ["Every seller who connected at least once: status, branches on/total, pilot, last token check, confirmations, open shipments (AC6). Filter by status, search by seller.", "Token never shown (AC7)."] },
+  { label: "Connections list: empty", apply: () => reset({ view: "conns", noSellers: true }), notes: ["“Пока ни один продавец не подключил Yandex Go.” (AC6)."] },
+  { label: "Seller: switch off with reason", apply: () => reset({ view: "seller", sel: 0 }), notes: ["<b>Отключить Yandex Go для продавца</b> → required reason 5–300 chars (AC4). Try confirming with an empty reason.", "History shows who, when and the reason (AC8, AC10)."] },
+  { label: "Seller switched off → switch on again", apply: () => { reset({ view: "seller", sel: 2 }); const s = S.sellers[2]; s.prev = s.st; s.st = "Отключено Optom.uz"; s.c = "r"; s.reason = "Повторные отмены после вызова курьера"; render(); }, notes: ["<b>Включить снова</b> checks the token with tariffs; success returns the previous state (AC5)."] },
+  { label: "Switch on again fails (401)", apply: () => { reset({ view: "seller", sel: 2, onFail: true }); const s = S.sellers[2]; s.prev = s.st; s.st = "Отключено Optom.uz"; s.c = "r"; s.reason = "Проверка"; render(); }, notes: ["Yandex returns 401 → status “Токен недействителен” (AC5)."] },
+]);
+</script></body></html>
